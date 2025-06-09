@@ -32,7 +32,7 @@ lsf.write_vpodprogress('Running adjustomatic', 'GOOD-8')
 lsf.write_output('Running adjustomatic')
 if not lsf.labcheck:
     try:
-        sys.path.append('/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup')
+        sys.path.append('/vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup')
         import adjustomatic
         adjustomatic.main()
     except Exception as e:
