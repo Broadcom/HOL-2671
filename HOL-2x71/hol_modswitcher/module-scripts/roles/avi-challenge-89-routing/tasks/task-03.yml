@@ -1,0 +1,22 @@
+- debug: msg="========================    Routing Task-03    ========================"
+
+- name: Set Region A Variables
+  set_fact:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01a.api_version }}"
+    pool_servers: "{{ pool_servers_region_a }}"
+    region_subnet: 172.16.130.0
+    region: a
+
+- name: Update Pool
+  community.network.avi_pool:
+    avi_api_update_method: patch
+    avi_api_patch_op: add
+    avi_credentials: "{{avi_credentials}}"
+    name: demo_vs-pool
+    servers:
+      - 172.16.210.11:
+        ip:
+          addr: 172.16.210.11
+          type: 'V4'
+        port: '8086'

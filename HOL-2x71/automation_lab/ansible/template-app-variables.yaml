@@ -1,0 +1,89 @@
+---
+- hosts: localhost #localhost can be used to run commands against the control node.
+  connection: local #Instructs Ansible to use local for all hosts in a playbook or task
+  gather_facts: false #Disables Ansible automatically gathering facts
+  vars: #Defines variables
+    avi_credentials: #Dictionary of Avi Controller credentials
+      username: "admin" #Avi Controller Username
+      password: "VMware123!" #Avi Controller Password
+      controller: "avicon-01a.vcf.sddc.lab" #Avi Controller FQDN
+      api_version: "30.2.1" #Avi Controller Version
+    deployment_name: ansible #Shortcut to prepend "ansible" to object names
+
+  collections: #Collections are a distribution format for Ansible content that can include playbooks, roles, modules, and plugins.
+    - vmware.alb #VMware Ansible Collections and Roles for Avi
+
+  tasks: #task executes a module with specific arguments
+  - name: create a pool #Name of task
+    vmware.alb.avi_pool: #Module for pool
+      avi_credentials: "{{avi_credentials}}" #Argument for calling Avi login credentials
+      api_context: '{{avi_api_context | default(omit)}}'
+      cloud_ref: /api/cloud?name=SiteA_nsx_cloud #Cloud pool will be created in
+      default_server_port: 80 #Default listening port for Pool
+      health_monitor_refs: #List of Health Monitors assigned to pool
+      - /api/healthmonitor?name=System-HTTP
+      lb_algorithm: LB_ALGORITHM_LEAST_CONNECTIONS #Pool load balancing algorithm
+      lb_algorithm_hash: LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS #Hash used by load balancing algorithm
+      name: "{{deployment_name}}-pool" #Pool name
+      server_disable_type: DISALLOW_NEW_CONNECTION 
+      servers:
+      - enabled: true #Server enabled 
+        ip:
+          addr: 172.16.110.11 #Server IP address
+          type: V4 #IP version
+        port: 30001 #Server listening port
+      - enabled: true #Server enabled 
+        ip:
+          addr: 172.16.110.12 #Server IP address
+          type: V4 #IP version
+        port: 30001 #Server enabled 
+      tenant: admin #Tenant pool with be created in
+      tier1_lr: /infra/tier-1s/t1-gw-sitea #Tier 1 router the pool will be attached to
+
+  - name: create a VsVIP #Name of task
+    vmware.alb.avi_vsvip: #Module for VsVIP
+      avi_credentials: "{{avi_credentials}}" #Argument for calling Avi login credentials
+      api_context: '{{avi_api_context | default(omit)}}'
+      cloud_ref: /api/cloud?name=SiteA_nsx_cloud #Cloud VsVIP will be created in
+      dns_info: #DNS configuration
+      - algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+        fqdn: "{{ deployment_name}}.region01a.vcf.sddc.lab" #VsVIP fqdn
+        ttl: 30 #Time To Live in seconds
+        type: DNS_RECORD_A #DNS record type
+      east_west_placement: false
+      name: "{{deployment_name}}-VsVip" #Name of VsVIP
+      tenant: admin #Tenant VsVIP will be created in
+      tier1_lr: /infra/tier-1s/t1-gw-sitea #Tier 1 router VsVIP will be attached to
+      vip:
+      - auto_allocate_ip: true #Autoallocate IP address
+        auto_allocate_ip_type: V4_ONLY #Autoallocate an IPv4 IP address
+        enabled: true #Enable VsVIP
+        ipam_network_subnet:
+          network_ref: /api/network?name=ls-vmnet-a #IPAM subnet to allocate IP address
+        vip_id: '1'
+      vrf_context_ref: /api/vrfcontext?name=t1-gw-sitea #VRF VsVIP will be created in
+
+  - name: Create a virtual service #Name of task
+    vmware.alb.avi_virtualservice: #Module for virtual service
+      avi_credentials: "{{avi_credentials}}" #Argument for calling Avi login credentials
+      api_context: '{{avi_api_context | default(omit)}}'
+      application_profile_ref: /api/applicationprofile?name=System-HTTP #Applicatin profile attached to virtual service
+      cloud_ref: /api/cloud?name=SiteA_nsx_cloud #Cloud virtual service will be created in
+      enabled: true #Enables virtual service
+      name: "{{ deployment_name }}-vs" #name of virtual service
+      network_profile_ref: /api/networkprofile?name=System-TCP-Proxy #Network profile attached to virtual service
+      pool_ref: /api/pool?name=ansible-pool #Pool attached to virtual service
+      services: 
+      - enable_ssl: false #SSL disable
+        port: 80 #Virtual service listening port
+      - enable_ssl: true # #SSL enable
+        port: 443 #Virtual service listening port
+      ssl_key_and_certificate_refs: #List of SSL Certificates attached to virtual service
+      - /api/sslkeyandcertificate?name=HandsOnLabs_Appcert
+      - /api/sslkeyandcertificate?name=System-Default-Cert-EC
+      ssl_profile_ref: /api/sslprofile?name=System-Standard #SSL Profile attached to virtual service
+      tenant: admin #Tenant virtual service will be attached to
+      vrf_context_ref: /api/vrfcontext?name=t1-gw-sitea #VRF virtual service will be created in
+      vsvip_ref: "/api/vsvip?name={{deployment_name}}-VsVip" #VsVIP virtual service will use
+
+

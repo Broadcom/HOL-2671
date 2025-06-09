@@ -1,0 +1,95 @@
+- debug: msg="========================    TASK-03    ========================"
+
+- name: Set Region A Variables
+  set_fact:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01b.api_version }}"
+    #pool_servers: "{{ pool_servers_region_a }}"
+    region_subnet: 172.16.110.0
+    region: a
+
+
+- name: Define task-03 Virtual Service
+  import_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01a.api_version }}"
+    avi_role_config_log_mode: 'False'
+    avi_config:
+      poolgroup:
+        - name: task-03-poolgroup
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          fail_action:
+            type: FAIL_ACTION_CLOSE_CONN
+          members:
+            - deployment_state: IN_SERVICE
+              pool_ref: /api/pool?name=task-03-pool
+              ratio: 1
+      pool:
+        - name: "task-03-pool"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          default_server_port: 30001 
+          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}" 
+          servers:
+            - hostname: "k8sworker-01{{ region }}.vcf.sddc.lab"
+              resolve_server_by_dns: true
+            - hostname: "k8sworker-02{{ region }}.vcf.sddc.lab"
+              resolve_server_by_dns: true
+          health_monitor_refs:
+            - '/api/healthmonitor?name=System-HTTP'
+          fail_action:
+            type: FAIL_ACTION_CLOSE_CONN
+          lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+      vsvip:
+        - name: "vsvip_task-03"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}" 
+          dns_info:
+            - num_records_in_response: 1
+              type: DNS_RECORD_A
+              fqdn: "{{ 'task-03.region01' + region | lower + '.vcf.sddc.lab' }}"
+              algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+              ttl: 30
+          vip:
+            - auto_allocate_ip: true
+              vip_id: '1'
+              avi_allocated_fip: false
+              discovered_networks:
+                - subnet:
+                    - mask: 24
+                      ip_addr:
+                        type: V4
+                        addr: "{{ region_subnet }}"
+                  network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+              enabled: true
+              ipam_network_subnet:
+                subnet:
+                  mask: 24
+                  ip_addr:
+                    type: V4
+                    addr: "{{ region_subnet }}"
+                network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+              auto_allocate_floating_ip: true
+              avi_allocated_vip: false
+              auto_allocate_ip_type: V4_ONLY
+      virtualservice:
+        - name: "task-03"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          pool_group_ref: "/api/poolgroup?name=task-03-poolgroup"
+          application_profile_ref: '/api/applicationprofile?name=System-HTTP'
+          services:
+            - port: 80
+          vsvip_ref: "/api/vsvip?name=vsvip_task-03"
+          analytics_policy:
+            udf_log_throttle: 10
+            full_client_logs:
+              duration: 0
+              throttle: 10
+              enabled: true
+            metrics_realtime_update:
+              duration: 0
+              enabled: false
+            significant_log_throttle: 10
+            client_insights: NO_INSIGHTS
+            all_headers: true

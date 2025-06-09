@@ -1,0 +1,463 @@
+#base playbook to tweak avi stuff.  Currently only setting a default route
+---
+- hosts: localhost
+  collections:
+    - vmware.alb
+  vars:
+    ansible_connection: local
+    #ips: ["192.168.110.10/24", "1.12.2.187", "5.39.14.101", "52.14.30.135", "67.223.120.87", "103.142.12.32", "109.237.177.16", "142.214.161.165", "78.108.177.52", "1.163.44.118", "161.98.255.1", "37.60.63.2", "206.223.191.1", "23.26.110.2", "27.113.239.2", "42.97.255.1", "132.247.255.2", "14.192.95.1", "37.16.63.1", "49.213.31.2", "41.67.128.1", "27.97.1.2"]
+    site_a:
+      username: "admin"
+      password: "VMware123!"
+      controller: avicon-01a.vcf.sddc.lab
+      api_version: "30.2.1"
+    site_b:
+      username: "admin"
+      password: "VMware123!"
+      controller: avicon-01b.vcf.sddc.lab
+      api_version: "30.2.1"
+  tasks:
+    - name: admin columns
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ site_a }}"
+        http_method: put
+        path: userpreferences
+        data:
+          ui_property: '{"defaultTimeframe":"1d","valuesToDisplay":"avg","sideRailOpen":true,"logs":{"savedSearch":[],"sidebarActiveTab":"1"},"appDashboard":{"viewType":"list"},"grid":{"pageSize":30,"alert":{"pageSize":50},"virtualservice-inventory":{"displayFields":["name","health","address","services","pools","service_engines"]},"virtualservice-inventory-list-page":{"displayFields":["name","health","address","fqdn","services","pools","service_engine_count","service_engines"]}}, "performanceControls":{}, "useUTCTime":false, "language":"en_US"}'
+#{"ui_property":"{\"defaultTimeframe\":\"1d\",\"valuesToDisplay\":\"avg\",\"sideRailOpen\":true,\"logs\":{\"savedSearch\":[],\"sidebarActiveTab\":\"1\"},\"appDashboard\":{\"viewType\":\"list\"},\"grid\":{\"pageSize\":30,\"alert\":{\"pageSize\":50},\"virtualservice-inventory\":{\"displayFields\":[\"name\",\"health\",\"address\",\"services\",\"pools\",\"service_engines\"]},\"virtualservice-inventory-list-page\":{\"displayFields\":[\"name\",\"health\",\"address\",\"fqdn\",\"services\",\"pools\",\"service_engine_count\",\"service_engines\"]}},\"performanceControls\":{},\"useUTCTime\":false,\"language\":\"en_US\"}"}
+    - name: admin columns
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ site_b }}"
+        http_method: put
+        path: userpreferences
+        data:
+          ui_property: '{"defaultTimeframe":"1d","valuesToDisplay":"avg","sideRailOpen":true,"logs":{"savedSearch":[],"sidebarActiveTab":"1"},"appDashboard":{"viewType":"list"},"grid":{"pageSize":30,"alert":{"pageSize":50},"virtualservice-inventory":{"displayFields":["name","health","address","services","pools","service_engines"]},"virtualservice-inventory-list-page":{"displayFields":["name","health","address","fqdn","services","pools","service_engine_count","service_engines"]}}, "performanceControls":{}, "useUTCTime":false, "language":"en_US"}'
+
+    # - name: Basic system configuration
+    #   vmware.alb.avi_systemconfiguration:
+    #     avi_credentials: "{{ site_a }}"
+    #     avi_api_patch_op: replace
+    #     avi_api_update_method: patch
+    #     default_license_tier: ENTERPRISE
+
+    # - name: Basic system configuration
+    #   vmware.alb.avi_systemconfiguration:
+    #     avi_credentials: "{{ site_b }}"
+    #     avi_api_patch_op: replace
+    #     avi_api_update_method: patch
+    #     default_license_tier: ENTERPRISE
+
+
+# ######   Delete old avi license, site A  ###########
+#     - name: Check for license
+#       vmware.alb.avi_api_session:
+#         avi_credentials:  "{{ site_a }}"
+#         http_method: get
+#         path: license
+#       register: license_lookup_result
+
+#     - set_fact:
+#         old_license_id: "{{ license_lookup_result | json_query(query) }}"
+#       vars:
+#         query: "obj.licenses[?license_name=='NSX Advanced Load Balancer'].license_id"
+
+#     - name: delete old Avi License if exists
+#       vmware.alb.avi_api_session:
+#         avi_credentials:  "{{ site_a }}"
+#         http_method: delete
+#         path: "licensing/{{old_license_id.0}}"
+#       when: old_license_id.0 is defined
+#  ####################################################
+
+# ######   Delete old avi license, site B  ###########
+#     - name: Check for license
+#       vmware.alb.avi_api_session:
+#         avi_credentials: "{{ site_b }}"
+#         http_method: get
+#         path: license
+#       register: license_lookup_result
+
+#     - set_fact:
+#         old_license_id: "{{ license_lookup_result | json_query(query) }}"
+#       vars:
+#         query: "obj.licenses[?license_name=='NSX Advanced Load Balancer'].license_id"
+
+#     - name: delete old Avi License if exists
+#       vmware.alb.avi_api_session:
+#         avi_credentials: "{{ site_b }}"
+#         http_method: delete
+#         path: "licensing/{{old_license_id.0}}"
+#       when: old_license_id.0 is defined
+
+#  ####################################################
+
+- hosts: k8s
+  tasks:
+    - name: Create a directory for docker override
+      file:
+        path: /etc/systemd/system/containerd.service.d
+        state: directory
+        mode: '0755'
+
+    - name: set up docker to use proxies
+      shell: |
+        cat > /etc/systemd/system/containerd.service.d/http-proxy.conf <<EOF
+        [Service]
+        Environment="HTTP_PROXY=http://10.0.100.1:3128"
+        Environment="HTTPS_PROXY=http://10.0.100.1:3128"
+        Environment="NO_PROXY=localhost,127.0.0.0/8,::1,.corp.local,k8smaster-01a,k8smaster-01b,avicon-01a,avicon-01b,172.16.110.10,172.16.210.10,172.16.230.0/24,172.16.130.0/24,172.16.0.0/16"
+        EOF
+
+    - name: Restart containerd
+      service:
+        name: containerd
+        daemon_reload: yes
+        state: restarted
+
+    - name: Restart kubelet
+      service:
+        name: kubelet
+        daemon_reload: yes
+        state: restarted
+
+- hosts: lmc
+  vars_files:
+    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+  tasks:
+    - name: add docker credential
+      ansible.builtin.shell:
+        cmd: "echo {{gcp_docker_cred}} | docker login -u _json_key_base64 --password-stdin https://us-central1-docker.pkg.dev"
+
+    - name: Creates directory
+      file:
+        path: /etc/ansible/hosts/
+        state: directory
+      become: yes
+
+    - name: Put inventory file in default location so modswitcher works with non-localhost thingies
+      copy:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/inventory.yml
+        dest: /etc/ansible/hosts/inventory.yml
+      become: yes
+
+    - name: Update readme on desktop
+      copy:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/README.txt
+        dest: /home/holuser/Desktop/README.txt
+        force: true
+
+    - name: Remove buildchecklist
+      ansible.builtin.file:
+        path: /home/holuser/Desktop/BuildChecklist.txt
+        state: absent
+
+    - name: Copy k8s manifest folder
+      ansible.posix.synchronize:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/k8s_manifests
+        dest: /hol/hol-2571
+
+    - name: Copy modswitcher folder
+      ansible.posix.synchronize:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/hol_modswitcher
+        dest: /hol/hol-2571
+
+    - name: Copy migration files folder
+      ansible.posix.synchronize:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/migration_files
+        dest: /hol/hol-2571
+
+    - name: Copy automation lab files folder
+      ansible.posix.synchronize:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/automation_lab
+        dest: /hol/hol-2571
+
+    - name: copy kubeconfig for AMKO
+      copy:
+        src: /home/holuser/.kube/config
+        dest: /hol/hol-2571/k8s_manifests/2571-04_lab/sitea/amko/gslb-members
+        remote_src: true
+
+    - name: copy t1 patch file for f5 conv
+      copy:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/migration_files/f5_migration/tier1_patch.yml
+        dest: /hol/migrationtools/uploads/
+
+    - name: Add NSX-T LB hostname entries
+      ansible.builtin.blockinfile:
+        marker: ";; {mark} ANSIBLE MANAGED BLOCK"
+        path: /etc/bind/vcf.sddc.lab.hosts
+        block: |
+          ;; records for migration NSX LBs 
+          hol-nsx-http-vs-01 IN A 172.16.230.101
+          hol-nsx-http-vs-02 IN A 172.16.230.102
+          hol-nsx-http-vs-03 IN A 172.16.230.103
+          hol-nsx-http-vs-04 IN A 172.16.230.104
+          hol-nsx-http-vs-05 IN A 172.16.230.105
+          hol-nsx-http-vs-06 IN A 172.16.230.106
+          hol-nsx-http-vs-07 IN A 172.16.230.107
+          hol-nsx-http-vs-08 IN A 172.16.230.108
+          hol-nsx-http-vs-09 IN A 172.16.230.109
+          hol-nsx-http-vs-10 IN A 172.16.230.110
+          hol-nsx-http-vs-11 IN A 172.16.230.111
+          hol-nsx-http-vs-12 IN A 172.16.230.112
+          hol-nsx-http-vs-13 IN A 172.16.230.113
+          hol-nsx-http-vs-14 IN A 172.16.230.114
+          hol-nsx-http-vs-15 IN A 172.16.230.115
+          hol-nsx-tcp-vs-16 IN A 172.16.230.116
+          hol-nsx-tcp-vs-17 IN A 172.16.230.117
+          hol-nsx-tcp-vs-18 IN A 172.16.230.118
+          hol-nsx-udp-vs-19 IN A 172.16.230.119
+          hol-nsx-udp-vs-20 IN A 172.16.230.120
+      become: yes
+
+    - name: Add Nautilus bookmarks
+      lineinfile:
+        dest: /home/holuser/.config/gtk-3.0/bookmarks
+        line: "{{ item }}"
+      loop:
+        - 'file:///hol/migrationtools/uploads uploads' 
+        - 'file:///hol/hol-2571/migration_files/f5_migration f5_migration' 
+
+
+    # - name: Pull traffic generator image
+    #   community.docker.docker_image:
+    #     name: "projects.registry.vmware.com/nsx_alb/locust_demotraffic:v9"
+    #     source: pull
+    #     state: present
+
+    - name: Reload bind
+      ansible.builtin.shell:
+        cmd: "/usr/sbin/rndc reload"
+      become: yes
+
+    - name: get jupyter (retag)
+      community.docker.docker_image:
+        name: us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/psm_jupyter_demo:v22.1.4-hol2
+        source: pull
+
+    - name: Replace jupyter service file
+      copy:
+        src: "/vpodrepo/2025-labs/2571/HOL-2x71/demo_traffic_files/service files/jupyter.service"
+        dest: /etc/systemd/system/jupyter.service
+      become: yes
+
+    - name: get avitools (retag)
+      community.docker.docker_image:
+        name: us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/avitools:latest
+        source: pull
+
+    - name: Replace avitools service file
+      copy:
+        src: "/vpodrepo/2025-labs/2571/HOL-2x71/demo_traffic_files/service files/avitools.service"
+        dest: /etc/systemd/system/avitools.service
+      become: yes
+
+    - name: get locust (retag)
+      community.docker.docker_image:
+        name: us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/locust_demotraffic:v9-hol
+        source: pull
+
+    - name: Replace locust service file
+      copy:
+        src: "/vpodrepo/2025-labs/2571/HOL-2x71/demo_traffic_files/service files/locust_sitea.service"
+        dest: /etc/systemd/system/locust_sitea.service
+      become: yes
+
+    - name: reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+      become: yes
+
+    - name: Restart service jupyter
+      ansible.builtin.systemd:
+        name: jupyter
+        state: restarted
+      become: yes
+
+    - name: Restart service avitools
+      ansible.builtin.service:
+        name: avitools
+        state: restarted
+      become: yes
+  
+    - name: Restart service locust 
+      ansible.builtin.service:
+        name: locust_sitea
+        state: restarted
+      become: yes
+  
+    - name: Create site A kubernetes things
+      kubernetes.core.k8s:
+        state: present
+        src: "/hol/hol-2571/k8s_manifests/base_lab/{{item | basename}}"
+        context: sitea
+        namespace: default
+      loop: "{{ lookup('fileglob', '/vpodrepo/2025-labs/2571/HOL-2x71/k8s_manifests/base_lab/*.yaml', wantlist=True) }}"
+
+    - name: Create site B kubernetes things
+      kubernetes.core.k8s:
+        state: present
+        src: "/hol/hol-2571/k8s_manifests/base_lab/{{item | basename}}"
+        context: siteb
+        namespace: default
+      loop: "{{ lookup('fileglob', '/vpodrepo/2025-labs/2571/HOL-2x71/k8s_manifests/base_lab/*.yaml', wantlist=True) }}"
+
+    - name: Create ako namespace
+      kubernetes.core.k8s:
+        name: avi-system
+        api_version: v1
+        kind: Namespace
+        state: present
+        context: sitea
+
+    - name: Create a pull secret for custom gwapi container
+      kubernetes.core.k8s:
+        state: present
+        namespace: avi-system
+        context: sitea
+        definition:
+          metadata:
+            name: avi-docker
+            namespace: avi-system
+          apiVersion: v1
+          data:
+            .dockerconfigjson: "{{ gcp_pull_secret }}"
+          kind: Secret
+          type: kubernetes.io/dockerconfigjson
+
+    - name: Create site A gateway API CRDs
+      kubernetes.core.k8s:
+        state: present
+        src: "/hol/hol-2571/k8s_manifests/2571-04_lab/sitea/gatewayapi/install_crds/{{item | basename}}"
+        context: sitea
+        namespace: default
+      loop: "{{ lookup('fileglob', '/vpodrepo/2025-labs/2571/HOL-2x71/k8s_manifests/2571-04_lab/sitea/gatewayapi/install_crds/*.yaml', wantlist=True) }}"
+
+    # - name: Create site b gateway API CRDs
+    #   kubernetes.core.k8s:
+    #     state: present
+    #     src: "/hol/hol-2571/k8s_manifests/2571-04_lab/sitea/gatewayapi/install_crds/{{item | basename}}"
+    #     context: siteb
+    #     namespace: default
+    #   loop: "{{ lookup('fileglob', '/vpodrepo/2025-labs/2571/HOL-2x71/k8s_manifests/2571-04_lab/sitea/gatewayapi/install_crds/*.yaml', wantlist=True) }}"
+
+    - name: Remove Postman shortcut
+      ansible.builtin.file:
+        path: /home/holuser/Desktop/Postman.desktop
+        state: absent
+
+    - name: Remove bottraffic shortcut
+      ansible.builtin.file:
+        path: /home/holuser/Desktop/bottraffic.desktop
+        state: absent
+
+######  Remember this hateful order of operations, or check 2237 confluence
+###
+    - name: make fake file
+      shell: touch /home/holuser/Desktop/modswitcher.desktop
+
+    - name: Make modswitcher icon Trusted
+      shell: dbus-launch gio set /home/holuser/Desktop/modswitcher.desktop "metadata::trusted" true
+
+    - name: Remove bottraffic shortcut
+      ansible.builtin.file:
+        path: /home/holuser/Desktop/modswitcher.desktop
+        state: absent
+
+    - name: make modswitcher shortcut
+      copy:
+        src: templates/modswitcher.desktop
+        dest: /home/holuser/Desktop/modswitcher.desktop
+        mode: '0775'
+###
+##########################################################################
+
+    - name: Creates directory
+      file:
+        path: /hol/hol-2571/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.6.1/linux_amd64
+        state: directory
+
+    - name: Download terraform provider
+      ansible.builtin.get_url:
+        url: https://github.com/vmware/terraform-provider-nsxt/releases/download/v3.6.1/terraform-provider-nsxt_3.6.1_linux_amd64.zip
+        dest: /tmp/terraform-provider-nsxt_3.6.1_linux_amd64.zip
+      environment:
+        http_proxy: http://proxy:3128
+        https_proxy: http://proxy:3128
+        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+
+    - name: Unarchive terraform provider
+      ansible.builtin.unarchive:
+        src: /tmp/terraform-provider-nsxt_3.6.1_linux_amd64.zip
+        dest: /hol/hol-2571/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.6.1/linux_amd64
+        remote_src: yes
+ 
+    - name: Creates directory
+      file:
+        path: /hol/hol-2571/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
+        state: directory
+
+    - name: Download terraform provider
+      ansible.builtin.get_url:
+        url: https://github.com/vmware/terraform-provider-avi/releases/download/v30.2.1/terraform-provider-avi_30.2.1_linux_amd64.zip
+        dest: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
+      environment:
+        http_proxy: http://proxy:3128
+        https_proxy: http://proxy:3128
+        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+
+    - name: Unarchive terraform provider
+      ansible.builtin.unarchive:
+        src: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
+        dest: /hol/hol-2571/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
+        remote_src: yes
+
+
+    - name: Put terraform RC in home folder
+      copy:
+        src: /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/terraform.rc
+        dest: /home/holuser/.terraformrc
+
+    # - name: change system proxy settings, might be able to do this with dconf ansible module
+    #   ansible.builtin.shell:
+    #     cmd: gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '.vcf.sddc.lab', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '.region01a.vcf.sddc.lab','.region01b.vcf.sddc.lab','avicon-01a','avicon-01b']"
+
+    - name: install vscode extension
+      ansible.builtin.shell:
+        cmd: /snap/bin/code --install-extension hashicorp.terraform
+      environment:
+        http_proxy: http://proxy:3128
+        https_proxy: http://proxy:3128
+        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+
+- hosts: k8s_masters
+  vars:
+    ansible_password: VMware123!
+  tasks:
+    - name: cleanup
+      docker_container:
+        name: "{{old_web_container}}"
+        state: absent
+        force_kill: yes
+        container_default_behavior: no_defaults
+      become: yes
+      ignore_errors: yes
+
+    - pause:
+        seconds: 10
+
+    - name: start clients
+      docker_container:
+        name: "demoweb"
+        state: started
+        restart_policy: always
+        container_default_behavior: no_defaults
+        env:
+          NOLOGO: "yes"
+        image: projects.registry.vmware.com/nsx_alb/avi_demoweb:v1
+        ports:
+          - "80:80"
+      register: result
+      retries: 3
+      delay: 3
+      become: yes

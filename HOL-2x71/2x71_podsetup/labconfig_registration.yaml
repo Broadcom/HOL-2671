@@ -1,0 +1,333 @@
+#base playbook to tweak avi stuff.  Currently only setting a default route
+---
+# - hosts: avicon-01a.corp.vmbeans.com, avicon-01b.corp.vmbeans.com
+#   gather_facts: no
+#   vars:
+#     ansible_connection: ssh
+#     ansible_user: admin
+#   tasks:
+#   - name: Wait 900 seconds, but only start checking after 10 seconds
+#     wait_for_connection:
+#       sleep: 10
+#       timeout: 900
+#   - name: Generate UUID
+#     shell: uuidgen
+#     register: uuidgen_output
+#   - name: Update Cluster Configuration
+#     lineinfile:
+#       dest: /var/lib/avi/etc/cluster.conf
+#       regexp: 'uuid:.*$'
+#       line: 'uuid: cluster-{{ uuidgen_output.stdout_lines[0] }}'
+#     become: yes
+#   - name: Restart Supervisor Process
+#     service:
+#       name: process-supervisor
+#       state: restarted
+#     become: yes
+
+#   - name: "Wait for the portal to become active"
+#     uri:
+#       url: "https://{{ inventory_hostname }}/api/initial-data"
+#       validate_certs: no
+#       status_code: 200
+#     register: result
+#     until: result.status == 200
+#     retries: 300
+#     delay: 10
+#     connection: local
+
+
+#   - name: Run a script with arguments (using 'cmd' parameter)
+#     ansible.builtin.script:
+#       cmd: "update_upgrade_usi_info_edit.py --upgrade-usi-uuid {{old_cluster_uuid}} --new-uuid cluster-{{ uuidgen_output.stdout_lines[0] }} --update"
+#       executable: /usr/bin/python3
+#     become: yes
+
+- hosts: localhost
+  collections:
+    - vmware.alb
+  vars_files:
+    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+  vars:
+    ansible_connection: local
+    avi_credentials:
+      username: "admin"
+      password: "VMware123!"
+      controller: avicon-01a.vcf.sddc.lab
+      api_version: "30.2.1"
+  
+  tasks:
+    - name: "Wait for the portal to become active"
+      uri:
+        url: "https://{{ avi_credentials['controller'] }}/api/initial-data"
+        validate_certs: no
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 300
+      delay: 10
+
+
+    - name: configure proxy
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        path: systemconfiguration
+        http_method: patch
+        data:
+          replace:
+            default_license_tier: ENTERPRISE
+            proxy_configuration:
+              host: 10.0.0.1
+              port: 3128
+          dns_configuration:
+            server_list:
+              - addr: "10.0.0.2"
+                type: V4
+          ntp_configuration:
+            ntp_server_list:
+              - addr: 10.0.0.1
+                type: V4
+
+    - name: Apply License Key
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: put
+        path: licensing
+        data:
+          serial_key: "{{ license_key }}"
+      ignore_errors: yes
+
+
+    # - name: get cluster uuid
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: cluster
+    #     http_method: get
+    #   register: cluster_results
+
+    # #- debug: var=cluster_results
+
+    # - set_fact:
+    #     new_cluster_name: "{'name' : 'hol_cluster_a{{ 10000000 | random }}'}"
+
+    # #- debug: var=new_cluster_name
+
+    # - set_fact:
+    #     new_cluster: " {{ cluster_results['obj'] | combine(new_cluster_name) | to_json}}"
+
+    # #- debug: var=new_cluster
+
+
+    # - name: configure cluster name
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: "cluster/{{ cluster_results['obj']['uuid'] }}"
+    #     http_method: put
+    #     data: "{{new_cluster}}"
+
+  
+    # - name: configure pulse stuff
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: albservicesconfig
+    #     http_method: patch
+    #     data:
+    #       replace:
+    #         app_signature_config:
+    #           app_signature_sync_interval: 1440
+    #         case_config:
+    #           enable_auto_case_creation_on_controller_failure: false
+    #           enable_auto_case_creation_on_se_failure: false
+    #           enable_cleanup_of_attached_files: true
+    #         feature_opt_in_status:
+    #           enable_appsignature_sync: true
+    #           enable_ip_reputation: true
+    #           enable_pulse_case_management: False
+    #           enable_pulse_waf_management: true
+    #           enable_user_agent_db_sync: false
+    #         ip_reputation_config:
+    #           ip_reputation_file_object_expiry_duration: 3
+    #           ip_reputation_sync_interval: 60
+    #         mode: MYVMWARE
+    #         polling_interval: 10
+    #         portal_url: https://portal.avipulse.vmware.com
+    #         use_split_proxy: false
+    #         use_tls: true
+    #         user_agent_db_config:
+    #           allowed_batch_size: 500
+    #         uuid: default
+    #         waf_config:
+    #           enable_auto_download_waf_signatures: true
+    #           enable_waf_signatures_notifications: true
+
+    # - name: Pulse registration or deregistration
+    #   avi_pulse_registration:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     state: present
+    #     jwt_token: '{{ jwt_token }}'
+    #     name: '{{ new_cluster_name }}'
+    #     description: 'Registration and deregistration'
+    #     email: 'avi-pm@groups.vmware.com'
+    #     account_id: '0ecf97f5-3134-4064-b091-6340dd0ec517'
+    #     optins: present
+    #     enable_pulse_case_management: True
+    #     case_config:
+    #       enable_auto_case_creation_on_controller_failure: False
+    #       enable_auto_case_creation_on_se_failure: False
+    #     enable_pulse_waf_management: True
+    #     waf_config:
+    #       enable_waf_signatures_notifications: True
+    #       enable_auto_download_waf_signatures: True
+    #     enable_user_agent_db_sync: False
+    #     enable_ip_reputation: True
+    #     enable_appsignature_sync: True
+
+
+    # - name: configure pulse stuff
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: albservicesconfig
+    #     http_method: patch
+    #     data:
+    #       replace:
+    #         feature_opt_in_status:
+    #           enable_pulse_case_management: False
+
+
+- hosts: localhost
+  collections:
+    - vmware.alb
+  vars_files:
+    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+  vars:
+    ansible_connection: local
+    avi_credentials:
+      username: "admin"
+      password: "VMware123!"
+      controller: avicon-01b.vcf.sddc.lab
+      api_version: "30.2.1"
+  
+  tasks:
+    - name: "Wait for the portal to become active"
+      uri:
+        url: "https://{{ avi_credentials['controller'] }}/api/initial-data"
+        validate_certs: no
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 300
+      delay: 10
+
+    - name: configure license mode
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        path: systemconfiguration
+        http_method: patch
+        data:
+          replace:
+            default_license_tier: ENTERPRISE
+            proxy_configuration:
+              host: 10.0.0.1
+              port: 3128
+
+    - name: Apply License Key
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: put
+        path: licensing
+        data:
+          serial_key: "{{ license_key }}"
+      ignore_errors: yes
+
+    # - name: get cluster uuid
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: cluster
+    #     http_method: get
+    #   register: cluster_results
+
+    # #- debug: var=cluster_results
+
+    # - set_fact:
+    #     new_cluster_name: "{'name' : 'hol_cluster_b{{ 10000000 | random }}'}"
+
+    # #- debug: var=new_cluster_name
+
+    # - set_fact:
+    #     new_cluster: " {{ cluster_results['obj'] | combine(new_cluster_name) | to_json}}"
+
+    # #- debug: var=new_cluster
+
+
+    # - name: configure cluster name
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: "cluster/{{ cluster_results['obj']['uuid'] }}"
+    #     http_method: put
+    #     data: "{{new_cluster}}"
+
+    # - name: configure pulse stuff
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: albservicesconfig
+    #     http_method: patch
+    #     data:
+    #       replace:
+    #         app_signature_config:
+    #           app_signature_sync_interval: 1440
+    #         case_config:
+    #           enable_auto_case_creation_on_controller_failure: false
+    #           enable_auto_case_creation_on_se_failure: false
+    #           enable_cleanup_of_attached_files: true
+    #         feature_opt_in_status:
+    #           enable_appsignature_sync: true
+    #           enable_ip_reputation: true
+    #           enable_pulse_case_management: false
+    #           enable_pulse_waf_management: true
+    #           enable_user_agent_db_sync: true
+    #         ip_reputation_config:
+    #           ip_reputation_file_object_expiry_duration: 3
+    #           ip_reputation_sync_interval: 60
+    #         mode: MYVMWARE
+    #         polling_interval: 10
+    #         portal_url: https://portal.avipulse.vmware.com
+    #         use_split_proxy: false
+    #         use_tls: true
+    #         user_agent_db_config:
+    #           allowed_batch_size: 500
+    #         uuid: default
+    #         waf_config:
+    #           enable_auto_download_waf_signatures: true
+    #           enable_waf_signatures_notifications: true
+
+    # - name: Pulse registration or deregistration
+    #   avi_pulse_registration:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     state: present
+    #     jwt_token: '{{ jwt_token }}'
+    #     name: '{{new_cluster_name}}'
+    #     description: 'Registration and deregistration'
+    #     email: 'avi-pm@groups.vmware.com'
+    #     account_id: '0ecf97f5-3134-4064-b091-6340dd0ec517'
+    #     optins: present
+    #     enable_pulse_case_management: True
+    #     case_config:
+    #       enable_auto_case_creation_on_controller_failure: False
+    #       enable_auto_case_creation_on_se_failure: False
+    #     enable_pulse_waf_management: True
+    #     waf_config:
+    #       enable_waf_signatures_notifications: True
+    #       enable_auto_download_waf_signatures: True
+    #     enable_user_agent_db_sync: False
+    #     enable_ip_reputation: True
+    #     enable_appsignature_sync: True
+  
+    # - name: configure pulse stuff
+    #   vmware.alb.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     path: albservicesconfig
+    #     http_method: patch
+    #     data:
+    #       replace:
+    #         feature_opt_in_status:
+    #           enable_pulse_case_management: False

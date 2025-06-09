@@ -1,0 +1,19 @@
+---
+## Define the parent virtual service
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gwapi-parent
+spec:
+  gatewayClassName: avi-lb
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    hostname: '*.region01a.vcf.sddc.lab'
+    tls:
+      certificateRefs:
+      - kind: Secret
+        name: 2571-wc-tls
+        group: ""
+

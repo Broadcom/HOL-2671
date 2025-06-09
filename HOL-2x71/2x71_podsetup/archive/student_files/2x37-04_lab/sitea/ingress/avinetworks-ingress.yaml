@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: avinetworks-ingress
+  namespace: default
+  labels:
+    app: gslb
+spec:
+  rules:
+  - host: avinetworks.region01a.corp.vmbeans.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: avinetworks
+            port:
+              number: 80

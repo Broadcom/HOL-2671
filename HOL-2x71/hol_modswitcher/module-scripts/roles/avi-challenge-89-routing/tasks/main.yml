@@ -1,0 +1,40 @@
+- debug:
+    msg: "Bootstrap Avi Challenge Environment"
+
+- name: Collect the instance information - Region A
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01a.api_version }}"
+    http_method: get
+    path: vimgrvmruntime
+    params: { name.contains: "k8sworker" }
+  register: avi_instances_region_a
+
+- name: Collect the instance information - Region B
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    api_version: "{{ avi_creds_region01a.api_version }}"
+    http_method: get
+    path: vimgrvmruntime
+    params: { name.contains: "k8sworker" }
+  register: avi_instances_region_b
+
+- name: Create pool members for region A
+  set_fact:
+    pool_servers_region_a: "{{ pool_servers_region_a | default([]) + [{'ip': { 'addr': item.guest_nic[0].guest_ip[0].prefix.ip_addr.addr, 'type': 'V4'}}] }}"
+  with_items: "{{ avi_instances_region_a.obj.results }}"
+
+- name: Create pool members for region B
+  set_fact:
+    pool_servers_region_b: "{{ pool_servers_region_b | default([]) + [{'ip': { 'addr': item.guest_nic[0].guest_ip[0].prefix.ip_addr.addr, 'type': 'V4'}}] }}"
+  with_items: "{{ avi_instances_region_b.obj.results }}"
+
+- include_tasks: task-02.yml
+
+- include_tasks: task-03.yml
+
+- include_tasks: task-05.yml
+
+- include_tasks: bgp-site-a.yml
+
+- include_tasks: bgp-site-b.yml

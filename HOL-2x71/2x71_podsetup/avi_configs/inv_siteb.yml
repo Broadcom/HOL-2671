@@ -1,0 +1,23 @@
+all:
+  hosts:
+    localhost:
+      ansible_python_interpreter: "{{ansible_playbook_python}}"
+      cloud_name: SiteB_nsx_cloud
+      site_letter: b
+      datastore_number: "2"
+      t1_name: t1-gw-siteb
+      mgmt_default_gateway: 172.16.220.1
+      data_default_gateway: 172.16.210.1
+      vc_username: administrator@vsphere.local
+      avi_controller: avicon-01b.vcf.sddc.lab
+      api_version: 30.2.1
+      vcenter_url: vcsa-01a.vcf.sddc.lab
+      mgmt_subnet: 172.16.220.0
+      mgmt_range_start: 172.16.220.50
+      mgmt_range_end: 172.16.220.199
+      vip_subnet: 172.16.210.0
+      vip_range_start: 172.16.210.50
+      vip_range_end: 172.16.210.99
+      worker1: 172.16.210.11
+      worker2: 172.16.210.12
+      dns_ip: 172.16.230.20

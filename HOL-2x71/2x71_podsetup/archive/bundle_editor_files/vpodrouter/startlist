@@ -1,0 +1,52 @@
+vmware.com
+odyssey.vmware.com
+odyssey-dev.vmware.com
+odyssey-stage.vmware.com
+s3-us-west-1.amazonaws.com
+q1uk5yfspf.execute-api.us-east-2.amazonaws.com
+cjguvz7527.execute-api.us-west-1.amazonaws.com
+auyrv6ve2i.execute-api.us-west-2.amazonaws.com
+projects.registry.vmware.com
+
+## stuff for pulse registration
+gaz.csp-vidm-prod.com
+portal.avipulse.vmware.com
+console.cloud.vmware.com
+auth.vmware.com
+vmwareidentity.com
+myvmware.workspaceair.com
+ncs-webroot-cache-.*-prod-webrootdb.s3.*.amazonaws.com
+ncs-waf-.*-prod-rulesets.s3.*.amazonaws.com
+
+## labhealth server
+207.189.189.231
+
+## added from https://support.sonatype.com/hc/en-us/articles/115015442847-Whitelisting-Docker-Hub-Hosts-for-Firewalls-and-HTTP-Proxy-Servers ##
+auth.docker.io
+registry-1.docker.io
+index.docker.io
+dseasb33srnrn.cloudfront.net
+production.cloudflare.docker.com
+##
+## needed for apphunter pulls
+slarimore02.github.io
+## needed for avi documentation site, and kubernetes documentation
+avinetworks.com
+kubernetes.io
+code.jquery.com
+cdnjs.cloudflare.com
+cdn.rawgit.com
+cdn.jsdelivr.net
+stackpath.bootstrapcdn.com
+use.fontawesome.com
+algolia.net
+algolianet.com
+## needed for git pulls during labstartup
+gitlab.com
+## needed for pip installs
+pypi.python.org
+pypi.org
+files.pythonhosted.org
+#### for ansible galaxy installs
+galaxy.ansible.com
+ansible-galaxy.s3.amazonaws.com

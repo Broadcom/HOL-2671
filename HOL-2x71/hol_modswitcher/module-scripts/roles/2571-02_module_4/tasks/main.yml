@@ -1,0 +1,123 @@
+- debug:
+    msg: "Running 2137-02 module 4 role"
+- pause:
+    seconds: 2
+
+- name: Collect adv-app-a details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    http_method: get
+    path: virtualservice
+    params:
+      { name: adv-app-a }
+  register: vs_adv_app_a
+
+- name: Collect adv-app-a details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    http_method: get
+    path: vsvip
+    params:
+      { name.contains: adv-app-a }
+  register: vsvip_adv_app_a
+
+- name: Collect adv-app-b details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    http_method: get
+    path: virtualservice
+    params:
+      { name: adv-app-b }
+  register: vs_adv_app_b
+
+- name: Collect adv-app-b details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    http_method: get
+    path: vsvip
+    params:
+      { name.contains: adv-app-b }
+  register: vsvip_adv_app_b
+
+- name: Collect region01a cluster details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    http_method: get
+    path: cluster
+  register: cluster_region01a
+
+- name: Collect region01b cluster details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    http_method: get
+    path: cluster
+  register: cluster_region01b
+
+- set_fact:
+    region_placeholder: "{{region}}"
+
+- name: Define advanced GS
+  import_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    region: "{{region_placeholder}}"
+    avi_config:
+      gslbservice:
+        - name: adv-app.gslb.vcf.sddc.lab
+          controller_health_status_enabled: true
+          down_response:
+            type: GSLB_SERVICE_DOWN_RESPONSE_ALL_RECORDS
+          enabled: true
+          is_federated: true
+          domain_names:
+            - adv-app.gslb.vcf.sddc.lab
+          health_monitor_refs:
+            - '/api/healthmonitor?name=System-GSLB-HTTP'
+          use_edns_client_subnet: true
+          wildcard_match: true
+          groups:
+            - priority: 10
+              members:
+                - cluster_uuid: "{{ cluster_region01a['obj'].uuid }}"
+                  ip:
+                    type: V4
+                    addr: "{{ vsvip_adv_app_a['obj']['results'][0]['vip'][0]['ip_address']['addr'] }}"
+                  vs_uuid: "{{ vs_adv_app_a['obj']['results'][0]['uuid'] }}"
+                  ratio: 1
+                  enabled: true
+                - cluster_uuid: "{{ cluster_region01b['obj'].uuid }}"
+                  ip:
+                    type: V4
+                    addr: "{{ vsvip_adv_app_b['obj']['results'][0]['vip'][0]['ip_address']['addr'] }}"
+                  vs_uuid: "{{ vs_adv_app_b['obj']['results'][0]['uuid'] }}"
+                  ratio: 1
+                  enabled: true
+                - ip:
+                    type: V4
+                    addr: 172.16.110.10
+                  ratio: 1
+                  enabled: true                  
+              enabled: true
+              name: adv-app-pool1
+              algorithm: GSLB_ALGORITHM_CONSISTENT_HASH
+            - priority: 5
+              members:
+                - ip:
+                    type: V4
+                    addr: 172.16.110.10
+                  ratio: 1
+                  enabled: true
+                - ip:
+                    type: V4
+                    addr: 172.16.210.10
+                  ratio: 1
+                  enabled: true
+              enabled: true
+              name: adv-app-pool2
+              algorithm: GSLB_ALGORITHM_ROUND_ROBIN
+          ttl: 2
+          min_members: 0
+          health_monitor_scope: GSLB_SERVICE_HEALTH_MONITOR_ALL_MEMBERS
+          pool_algorithm: GSLB_SERVICE_ALGORITHM_PRIORITY
+

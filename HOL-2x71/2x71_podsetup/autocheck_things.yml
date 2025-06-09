@@ -1,0 +1,27 @@
+  
+---
+- hosts: localhost
+  connection: local
+
+  tasks:  
+  - name: Set disk UUID
+    vmware_guest:
+      validate_certs: False
+      hostname: "vcsa-01a.vcf.sddc.lab"
+      username: "administrator@vsphere.local"
+      password: "VMware123!"
+      name: "{{item}}"
+      advanced_settings:
+        - key: uuid.action
+          value: keep
+        - key: keyboard.typematicMinDelay
+          value: 2000000
+    loop:
+      - k8smaster-01a
+      - k8smaster-01b
+      - k8sworker-01a
+      - k8sworker-01b
+      - k8sworker-02a
+      - k8sworker-02b
+      - edgenode-a
+      - edgenode-b

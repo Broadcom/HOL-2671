@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: images
+  namespace: default
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: images
+    spec:
+      containers:
+        - name: images
+          imagePullPolicy: IfNotPresent
+          image: projects.registry.vmware.com/aviodyssey/avi-challenge-images:latest
+          ports:
+            - containerPort: 80
+  selector:
+    matchLabels:
+      app: images

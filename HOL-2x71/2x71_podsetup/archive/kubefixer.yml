@@ -1,0 +1,223 @@
+#base playbook to tweak avi stuff.  Currently only setting a default route
+---
+- hosts: k8smaster-01a
+  gather_facts: no
+  vars:
+    # ansible_connection: ssh
+    # ansible_user: admin
+  tasks:
+  - name: Wait 900 seconds, but only start checking after 10 seconds
+    wait_for_connection:
+      sleep: 10
+      timeout: 900
+  
+  - name: Gathering facts
+    setup:
+  # - name: grab good kubeadm and store it locally
+  #   ansible.builtin.fetch:
+  #     src: /usr/bin/kubeadm
+  #     dest: /tmp/
+  #     flat: yes
+
+  - name:  delete kubelet.conf
+    ansible.builtin.file:
+      path: /etc/kubernetes/kubelet.conf
+      state: absent
+    become: yes
+
+  - name: init kubeconfig and kubelet
+    shell:
+      cmd: /usr/bin/kubeadm init phase kubeconfig kubelet
+    become: yes
+
+
+  - name: copy working kubeconfig
+    ansible.builtin.copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/holuser/.kube/config
+      remote_src: yes
+    become: yes
+
+
+  - name: create token for bootstrapping
+    shell:
+      cmd: /usr/bin/kubeadm token create --ttl 14400h
+    register: token_output
+  
+  #- debug: var=token_output
+
+  - debug: var=token_output['stdout_lines'][0]
+
+- hosts: k8sworker-01a, k8sworker-02a
+  gather_facts: no
+
+  tasks:
+  - name: Wait 900 seconds, but only start checking after 10 seconds
+    wait_for_connection:
+      sleep: 10
+      timeout: 900
+
+  - name: Gathering facts
+    setup:
+
+  # - name: Replace a localhost entry with our own
+  #   ansible.builtin.lineinfile:
+  #     path: /etc/hosts
+  #     regexp: '^127\.0\.1\.1'
+  #     state: absent
+  #   become: yes
+
+  # - name: Setting search domain if missing
+  #   replace:
+  #     dest: /etc/netplan/00-installer-config.yaml
+  #     regexp: 'search:(.*)\[\]'
+  #     replace: 'search: ["corp.local"]'
+  #   become: yes
+
+  # - name: apply netplan changes
+  #   shell:
+  #     cmd: netplan apply
+  #   become: yes
+
+  - name: Copy using inline content
+    ansible.builtin.copy:
+      content: |
+        apiVersion: v1
+        kind: Config
+        clusters:
+        - cluster:
+            certificate-authority: /etc/kubernetes/pki/ca.crt
+            server: https://k8smaster-01a:6443
+          name: bootstrap
+        contexts:
+        - context:
+            cluster: bootstrap
+            user: kubelet-bootstrap
+          name: bootstrap
+        current-context: bootstrap
+        preferences: {}
+        users:
+        - name: kubelet-bootstrap
+          user:
+            token: {{ hostvars['k8smaster-01a']['token_output']['stdout_lines'][0] }}
+      dest: /etc/kubernetes/bootstrap-kubelet.conf
+    become: yes
+
+  - name: restart kubelet
+    service:
+      name: kubelet
+      state: restarted
+    become: yes
+
+- hosts: k8smaster-01b
+  gather_facts: no
+  vars:
+    # ansible_connection: ssh
+    # ansible_user: admin
+  tasks:
+  - name: Wait 900 seconds, but only start checking after 10 seconds
+    wait_for_connection:
+      sleep: 10
+      timeout: 900
+  
+  - name: Gathering facts
+    setup:
+
+  # - name: grab good kubeadm and store it locally
+  #   ansible.builtin.fetch:
+  #     src: /usr/bin/kubeadm
+  #     dest: /tmp/
+  #     flat: yes
+
+  - name:  delete kubelet.conf
+    ansible.builtin.file:
+      path: /etc/kubernetes/kubelet.conf
+      state: absent
+    become: yes
+
+  - name: init kubeconfig and kubelet
+    shell:
+      cmd: /usr/bin/kubeadm init phase kubeconfig kubelet
+    become: yes
+
+
+  - name: copy working kubeconfig
+    ansible.builtin.copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/holuser/.kube/config
+      remote_src: yes
+    become: yes
+
+
+  - name: create token for bootstrapping
+    shell:
+      cmd: /usr/bin/kubeadm token create --ttl 14400h
+    register: token_output
+  
+  #- debug: var=token_output
+
+  - debug: var=token_output['stdout_lines'][0]
+
+- hosts: k8sworker-01b, k8sworker-02b
+  gather_facts: no
+
+  tasks:
+  - name: Wait 900 seconds, but only start checking after 10 seconds
+    wait_for_connection:
+      sleep: 10
+      timeout: 900
+
+  - name: Gathering facts
+    setup:
+
+  # - name: Replace a localhost entry with our own
+  #   ansible.builtin.lineinfile:
+  #     path: /etc/hosts
+  #     regexp: '^127\.0\.1\.1'
+  #     state: absent
+  #   become: yes
+
+  # - name: Setting search domain if missing
+  #   replace:
+  #     dest: /etc/netplan/00-installer-config.yaml
+  #     regexp: 'search:(.*)\[\]'
+  #     replace: 'search: ["corp.local"]'
+  #   become: yes
+
+  # - name: apply netplan changes
+  #   shell:
+  #     cmd: netplan apply
+  #   become: yes
+
+  - name: Copy using inline content
+    ansible.builtin.copy:
+      content: |
+        apiVersion: v1
+        kind: Config
+        clusters:
+        - cluster:
+            certificate-authority: /etc/kubernetes/pki/ca.crt
+            server: https://k8smaster-01b:6443
+          name: bootstrap
+        contexts:
+        - context:
+            cluster: bootstrap
+            user: kubelet-bootstrap
+          name: bootstrap
+        current-context: bootstrap
+        preferences: {}
+        users:
+        - name: kubelet-bootstrap
+          user:
+            token: {{ hostvars['k8smaster-01b']['token_output']['stdout_lines'][0] }}
+      dest: /etc/kubernetes/bootstrap-kubelet.conf
+    become: yes
+
+  - name: restart kubelet
+    service:
+      name: kubelet
+      state: restarted
+    become: yes
+
+
+

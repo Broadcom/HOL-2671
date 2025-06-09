@@ -1,0 +1,6 @@
+# List the vCenters to check
+# specify the host type (linux, windows, esx)
+# specify the account to use (required)
+# vSphere base templates
+vcsa-01a.corp.local:linux:administrator@vsphere.local
+vcsa-01b.corp.local:linux:administrator@vsphere2.local

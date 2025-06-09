@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: secure-ingress
+  namespace: default
+spec:
+  tls:
+  - hosts:
+      - secure-juice.region01b.vcf.sddc.lab
+    secretName: 2571-wc-tls
+  rules:
+  - host: secure-juice.region01b.vcf.sddc.lab
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: juice-cip
+            port:
+              number: 80

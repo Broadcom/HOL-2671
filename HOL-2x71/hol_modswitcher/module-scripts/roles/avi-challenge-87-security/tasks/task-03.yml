@@ -1,0 +1,7 @@
+- debug: msg="========================    TASK-03    ========================"
+
+- name: Setup WAF Task with a Python script
+  script:  /hol/hol-2571/2x37-modswitcher/ansible-playbooks/waf_setup.py
+  args:
+    executable: "{{ansible_playbook_python}}"
+  delegate_to: 127.0.0.1

@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+  collections:
+    - vmware.alb
+  vars:
+    AVI_CREDENTIALS:
+      controller: avicon-01b.corp.vmbeans.com
+      username: admin
+      password: VMware1!
+      api_version: 22.1.3
+  gather_facts: no
+  tasks:
+  - name: Update hol-nsx-http-vs-11 profile
+    avi_virtualservice:
+      avi_credentials: "{{ AVI_CREDENTIALS | default(omit) }}"
+      name: hol-nsx-http-vs-11
+      avi_api_update_method: patch
+      avi_api_patch_op: add
+      application_profile_ref: /api/applicationprofile/?name=System-Secure-HTTP
+      services:
+        - port: 80

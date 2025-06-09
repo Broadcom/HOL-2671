@@ -1,0 +1,98 @@
+- debug:
+    msg: "Running 2137-02 module 2 role"
+- pause:
+    seconds: 2
+
+- name: Collect global-dns-vs-01a details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    http_method: get
+    path: virtualservice
+    params:
+      { name: global-dns-vs-01a }
+  register: vs_global_dns_vs_01a
+
+- name: Collect global-dns-vs-01b details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    http_method: get
+    path: virtualservice
+    params:
+      { name: global-dns-vs-01b }
+  register: vs_global_dns_vs_01b
+
+- name: Collect region01a cluster details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    http_method: get
+    path: cluster
+  register: cluster_region01a
+
+- name: Collect region01b cluster details
+  vmware.alb.avi_api_session:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    http_method: get
+    path: cluster
+  register: cluster_region01b
+
+
+- name: Define GSLB Cluster
+  vmware.alb.avi_gslb:
+    avi_credentials: "{{ avi_credentials }}"
+    name: Default
+    is_federated: true
+    sites:
+      - username: admin
+        name: region01a
+        ip_addresses:
+          - type: V4
+            addr: 10.0.0.87
+        enabled: true
+        member_type: GSLB_ACTIVE_MEMBER
+        location:
+          source: GSLB_LOCATION_SRC_USER_CONFIGURED
+          location:
+            latitude: 37.4418983459
+            name: 'Palo Alto, CA'
+            longitude: -122.1429977417
+        cluster_uuid: "{{ cluster_region01a['obj'].uuid }}"
+        dns_vses:
+          - dns_vs_uuid: "{{ vs_global_dns_vs_01a['obj']['results'][0]['uuid'] }}"
+        hm_shard_enabled: false
+        password: 'VMware123!'
+        port: 443
+      - username: admin
+        name: region01b
+        ip_addresses:
+          - type: V4
+            addr: 10.0.1.87
+        enabled: true
+        member_type: GSLB_ACTIVE_MEMBER
+        location:
+          source: GSLB_LOCATION_SRC_USER_CONFIGURED
+          location:
+            latitude: 41.3851013184
+            name: 'Barcelona, ES'
+            longitude: 2.1733999252
+        cluster_uuid: "{{ cluster_region01b['obj'].uuid }}"
+        dns_vses:
+          - dns_vs_uuid: "{{ vs_global_dns_vs_01b['obj']['results'][0]['uuid'] }}"
+        hm_shard_enabled: false
+        password: 'VMware123!'
+        port: 443
+    dns_configs:
+      - domain_name: gslb.vcf.sddc.lab
+    leader_cluster_uuid: "{{ cluster_region01a['obj'].uuid }}"
+
+
+- name: Define geodb profile
+  vmware.alb.avi_gslbgeodbprofile:
+    avi_credentials: "{{ avi_credentials }}"
+    name: geoprofile1
+    is_federated: true
+    entries:
+      - priority: 10
+        file:
+          format: GSLB_GEODB_FILE_FORMAT_AVI
+          filename: "AviGeoDb.txt.gz"
+

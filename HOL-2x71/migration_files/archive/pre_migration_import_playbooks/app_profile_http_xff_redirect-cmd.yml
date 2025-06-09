@@ -1,0 +1,28 @@
+---
+# Version 1
+
+- hosts: localhost
+  connection: local
+  roles:
+    - avinetworks.avisdk
+  gather_facts: no
+  tasks:
+  - name: Create or Update https-xff-redirect-cmd Application Profile #Name of Ansible task
+    avi_applicationprofile: #Calls the avi_applicationprofile Ansible module
+      api_context: '{{avi_api_context | default(omit)}}'
+      api_version: 20.1.2 #NSX ALB Version
+      controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
+      username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      description: null
+      http_profile: #Specifies the http application proxy profile parameters
+        client_max_header_size: 32 #Client max header size
+        connection_multiplexing_enabled: false #Connection Multiplexing disabled
+        secure_cookie_enabled: false #Secure Cookies disabled
+        x_forwarded_proto_enabled: false #X-Forwarded-Protocol disabled
+        xff_alternate_name: null #X-Forwarded-For Alternate Name Null
+        xff_enabled: false #X-Forwarded-For header insertion disabled
+        http_to_https: true #Enabling HTTP to HTTPS Redirect with "true" variable
+      name: https-xff-redirect-cmd #Name of application profile to create
+      tenant: hol #Destination tenant
+      type: APPLICATION_PROFILE_TYPE_HTTP #Type of application profile (HTTP)

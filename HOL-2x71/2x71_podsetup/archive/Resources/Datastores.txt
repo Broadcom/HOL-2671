@@ -1,0 +1,7 @@
+# version 1.1 - 19 January 2023
+# Datastores to be checked
+#  hosts will be rescanned if these are missing
+stgb-01a.corp.vmbeans.com:RegionA01-ISCSI01-COMP01
+stgb-01a.corp.vmbeans.com:RegionB01-ISCSI01-COMP01
+#VSAN:RegionA01-VSAN-COMP01
+#VSAN:RegionB01-VSAN-COMP01

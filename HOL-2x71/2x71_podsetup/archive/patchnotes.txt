@@ -1,0 +1,20 @@
+
+
+/opt/avi/python/bin/portal/api/views_albservices_oauth_custom.py
+
+then restart aviportal
+
+"service aviportal restart"
+
+
+
+            if response.status_code == StatusCodes.OK:
+                log.info("Successfully fetched new access token with refresh token grant type.")
+                refresh_response=response.json()
+                access_token=refresh_response.get('access_token')
+                default_instance_url=refresh_response.get('instance_url', 'EmptyURL')
+                log.info("Saving token data in controller DB.")
+                portal_utils.save_authentication_info(access_token, refresh_token, default_instance_url)
+                # trigger the event to update pulse portal connectivity/health status
+                portal_utils.trigger_albservices_status_update()
+                return JsonResponse(data={}, status=StatusCodes.OK.value, safe=False)

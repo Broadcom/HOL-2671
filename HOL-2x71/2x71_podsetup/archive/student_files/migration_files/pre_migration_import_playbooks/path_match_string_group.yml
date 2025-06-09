@@ -1,0 +1,25 @@
+---
+# Version 1
+
+- connection: local
+  hosts: localhost
+  roles:
+  - avinetworks.avisdk
+  tasks:
+    - name: "Create or Update stringgroup: path_match_respond_403" #Name of Ansible task
+      avi_stringgroup: #Calls the avi_stringgroup module
+        controller: "{{ controller }}" #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
+        username: "{{ username }}" #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
+        password: "{{ password }}" #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+        api_context: "{{api_context | default(omit)}}"
+        api_version: 20.1.2 #NSX ALB Version
+        kv: #Configure key value in the string group
+        - key: "/secure/" #Values in stringgroup
+        - key: "/system/"
+        - key: "/admin/"
+        - key: "/login/"
+        name: path_match_respond_403 #String Group name
+        state: "{{ state | default(omit)}}" #State
+        tenant: hol #Destination tenant
+        tenant_ref: /api/tenant?name=hol #Destination tenant reference
+        type: SG_TYPE_STRING #String Group Type

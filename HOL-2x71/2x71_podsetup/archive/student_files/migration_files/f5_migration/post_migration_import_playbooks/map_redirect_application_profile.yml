@@ -1,0 +1,169 @@
+---
+# Version 1
+
+- hosts: localhost
+  connection: local
+  roles:
+    - avinetworks.avisdk
+  gather_facts: no
+  tasks:
+  - name: Update hol-11-advanced-http-vs Application Profile #Name of Ansible task
+    avi_virtualservice: #Calls the avi_virtualservice Ansible module
+      controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
+      username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      api_version: 22.1.3 #NSX ALB Version
+      tenant: hol #Destination Tenant
+      name: hol-11-advanced-http-vs #Name of VS to patch
+      avi_api_update_method: patch #Update method
+      avi_api_patch_op: replace #Patch operation
+      services: #List of services defined for this virtual service.
+      - enable_ssl: false #SSL Disabled
+        port: '80' #Port 80
+      - enable_ssl: true  #SSL Enabled
+        port: '443' #Port 443
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-12-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-12-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-13-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-13-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-14-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-14-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-15-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-15-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-16-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-16-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-17-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-17-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-18-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-18-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-19-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-19-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile
+  - name: Update hol-20-advanced-http-vs Application Profile
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-20-advanced-http-vs
+      avi_api_update_method: patch 
+      avi_api_patch_op: replace
+      services:
+      - enable_ssl: false 
+        port: '80'
+      - enable_ssl: true 
+        port: '443'
+      application_profile_ref: /api/applicationprofile/?name=https-xff-redirect-cmd #Updating the Virtual Service Application Profile

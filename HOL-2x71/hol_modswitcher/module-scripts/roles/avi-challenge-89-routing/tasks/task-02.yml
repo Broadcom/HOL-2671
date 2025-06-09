@@ -1,0 +1,137 @@
+- debug: msg="========================    Routing Task-02    ========================"
+
+- name: Set Region b Variables
+  set_fact:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    api_version: "{{ avi_creds_region01b.api_version }}"
+    pool_servers: "{{ pool_servers_region_b }}"
+    region_subnet: 172.16.230.0
+    region: b
+
+- name: Define "{{ 'tshoot-task-02' + region }}" Virtual Service
+  import_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_config:
+      vsdatascriptset:
+        - name: Log-Headers
+          datascript:
+            - evt: VS_DATASCRIPT_EVT_HTTP_REQ_DATA
+              script: "headers = avi.http.get_header()\nfor header,valu in pairs(headers) do\n    avi.vs.log(header .. \":\" .. value)\nend"
+      pool:
+        - name: "{{ 'task02' + region | lower +'-pool'}}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          default_server_port: 30001
+          servers: '{{ pool_servers }}'
+          health_monitor_refs:
+            - '/api/healthmonitor?name=System-HTTP'
+      vsvip:
+        - name: "{{ 'vsvip_task02' + region }}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          dns_info:
+            - num_records_in_response: 1
+              type: DNS_RECORD_A
+              fqdn: "{{ 'task02' + region | lower +'.region01' + region | lower + '.vcf.sddc.lab' }}"
+              algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+              ttl: 30
+          vip:
+            - auto_allocate_ip: true
+              vip_id: '1'
+              avi_allocated_fip: false
+              discovered_networks:
+                - subnet:
+                    - mask: 24
+                      ip_addr:
+                        type: V4
+                        addr: "{{ region_subnet }}"
+                  network_ref: "{{ '/api/network?name=VIP-Region' + region | upper +'01-vDS-COMP' }}"
+              enabled: true
+              ipam_network_subnet:
+                subnet:
+                  mask: 24
+                  ip_addr:
+                    type: V4
+                    addr: "{{ region_subnet }}"
+                network_ref: "{{ '/api/network?name=VIP-Region' + region | upper +'01-vDS-COMP' }}"
+              auto_allocate_floating_ip: true
+              avi_allocated_vip: false
+              auto_allocate_ip_type: V4_ONLY
+      virtualservice:
+        - name: "{{ 'task-02' }}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          pool_ref: "{{'/api/pool?name=task02' + region +'-pool'}}"
+          application_profile_ref: '/api/applicationprofile?name=System-HTTP'
+          services:
+            - port: 80
+          vsvip_ref: "{{ '/api/vsvip?name=vsvip_task02' + region }}"
+          analytics_policy:
+            udf_log_throttle: 10
+            full_client_logs:
+              duration: 0
+              throttle: 10
+              enabled: true
+            metrics_realtime_update:
+              duration: 0
+              enabled: false
+            significant_log_throttle: 10
+            client_insights: NO_INSIGHTS
+            all_headers: true
+      systemconfiguration:
+        - dns_configuration:
+            server_list:
+              - addr: 10.0.0.2
+                type: V4
+            search_domain: corp.local
+          ntp_configuration:
+            ntp_servers:
+              - server:
+                  addr: 192.168.100.1
+                  type: V4
+          portal_configuration:
+            enable_https: true
+            redirect_to_https: true
+            enable_http: true
+            use_uuid_from_input: false
+            enable_clickjacking_protection: true
+            allow_basic_authentication: false
+            password_strength_check: true
+            disable_remote_cli_shell: false
+            disable_swagger: false
+            api_vorce_timeout: 24
+            minimum_password_length: 8
+            sslkeyandcertificate_refs:
+              - "/api/sslkeyandcertificate?name=HandsOnLabs Controllercert"
+            sslprofile_ref: /api/sslprofile?name=System-Standard-Portal
+          global_tenant_config:
+            tenant_vrf: false
+            se_in_provider_context: true
+            tenant_access_to_provider_se: true
+          email_configuration:
+            smtp_type: SMTP_LOCAL_HOST
+            from_email: admin@avicontroller.net
+            mail_server_name: localhost
+            mail_server_port: 25
+            disable_tls: false
+          docker_mode: false
+          ssh_ciphers:
+            - aes128-ctr
+            - aes256-ctr
+          ssh_hmacs:
+            - hmac-sha2-512-etm@openssh.com
+            - hmac-sha2-256-etm@openssh.com
+            - hmac-sha2-512
+          default_license_tier: ENTERPRISE_WITH_CLOUD_SERVICES
+          secure_channel_configuration:
+            sslkeyandcertificate_refs:
+              - /api/sslkeyandcertificate?name=System-Default-Secure-Channel-Cert
+          welcome_workflow_complete: true
+          fips_mode: false
+          enable_cors: false
+          common_criteria_mode: false
+          uuid: default
+          proxy_configuration:
+            host: 10.0.100.1
+            port: 3128
+            
+
+

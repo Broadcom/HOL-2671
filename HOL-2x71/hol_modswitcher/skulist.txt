@@ -1,0 +1,6 @@
+HOL-2571-01 - Getting Started
+HOL-2571-02 - Global Server Load Balancing
+HOL-2571-03 - Security (WAF)
+HOL-2571-04 - Containers (AKO)
+HOL-2571-05 - Migration (F5 and NSX-T)
+HOL-2571-06 - Automation

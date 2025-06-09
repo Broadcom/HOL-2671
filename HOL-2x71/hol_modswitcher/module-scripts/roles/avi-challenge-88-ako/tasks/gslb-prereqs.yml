@@ -1,0 +1,79 @@
+- debug: msg="========================    GSLB-PREREQS Region    ========================"
+
+- name: Set Region A Variables
+  set_fact:
+    region_subnet: '172.16.130.0/24'
+    region_dns_vsvip_address: '172.16.130.21'
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01b.api_version }}"
+  when: region == 'a'
+
+- name: Set Region B Variables
+  set_fact:
+    region_subnet: '172.16.230.0/24'
+    region_dns_vsvip_address: '172.16.230.21'
+    avi_credentials: "{{ avi_creds_region01b }}"
+    api_version: "{{ avi_creds_region01b.api_version }}"
+  when:
+    region == 'b'
+
+- name: Define global DNS "{{ 'global-dns-vs-01' + region }}" Virtual Service
+  import_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_config:
+      serviceenginegroup:
+        - name: "{{ 'gslb01' + region }}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          se_name_prefix: "{{ 'gslb01' + region }}"
+          placement_mode: PLACEMENT_MODE_AUTO
+          ha_mode: HA_MODE_SHARED
+          algo: PLACEMENT_ALGO_PACKED
+          vcpus_per_se: 1
+          cpu_reserve: false
+          memory_per_se: 4096
+          mem_reserve: false
+          disk_per_se: 15
+          min_se: 1
+          buffer_se: 0
+          # extra_shared_config_memory: 2000
+      vsvip:
+        - name: "{{ 'vsvip_global-dns-vs-01' + region }}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          vip:
+            - auto_allocate_ip: false
+              vip_id: '1'
+              avi_allocated_fip: false
+              enabled: true
+              auto_allocate_floating_ip: false
+              avi_allocated_vip: false
+              ip_address:
+                type: V4
+                addr: "{{ region_dns_vsvip_address }}"
+      virtualservice:
+        - name: "{{ 'global-dns-vs-01' + region }}"
+          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+          application_profile_ref: '/api/applicationprofile?name=System-DNS'
+          network_profile_ref: '/api/networkprofile/?name=System-UDP-Per-Pkt'
+          se_group_ref: "{{ '/api/serviceenginegroup/?name=gslb01'+ region }}"
+          services:
+            - enable_ssl: false
+              port_range_end: 53
+              port: 53
+            - enable_ssl: false
+              port_range_end: 53
+              port: 53
+              override_network_profile_ref: '/api/networkprofile/?name=System-TCP-Proxy'
+          vsvip_ref: "{{ '/api/vsvip?name=vsvip_global-dns-vs-01' + region }}"
+          analytics_policy:
+            udf_log_throttle: 10
+            full_client_logs:
+              duration: 0
+              throttle: 10
+              enabled: true
+            metrics_realtime_update:
+              duration: 0
+              enabled: false
+            significant_log_throttle: 10
+            client_insights: NO_INSIGHTS
+            all_headers: false

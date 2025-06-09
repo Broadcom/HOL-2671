@@ -1,0 +1,33 @@
+- name: Add AKO chart repo
+  community.kubernetes.helm_repository:
+    name: ako
+    repo_url: "https://projects.registry.vmware.com/chartrepo/ako"
+
+- name: Generate AKO Values Files
+  ansible.builtin.template:
+    src: ako-values.yaml.j2
+    dest: "{{ item.name}}-ako-values.yaml"
+  loop: "{{ sites }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Deploy AKO
+  community.kubernetes.helm:
+    name: ako
+    chart_ref: ako/ako
+    chart_version: "{{ ako_version }}"
+    release_namespace: avi-system
+    create_namespace: yes
+    update_repo_cache: yes
+    values: "{{ lookup('template', 'ako-values.yaml.j2') | from_yaml }}"
+    kube_context: "{{ item.context }}"
+  loop: "{{ sites }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Apply Ingress manifest to the cluster.
+  community.kubernetes.k8s:
+    state: present
+    src: siteb-kuard-ingress.yaml
+    context: siteb
+    namespace: default

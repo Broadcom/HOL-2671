@@ -1,0 +1,16 @@
+apiVersion: amko.vmware.com/v1alpha1
+kind: GSLBHostRule
+metadata:
+  name: avinetworks-gslbhostrule
+  namespace: default
+spec:
+  fqdn: avinetworks.gslb.corp.vmbeans.com
+  healthMonitorRefs:
+  - System-GSLB-HTTPS
+  - System-GSLB-Ping
+  ttl: 100
+  poolAlgorithmSettings:
+    lbAlgorithm: GSLB_ALGORITHM_GEO
+    geoFallback:
+      lbAlgorithm: GSLB_ALGORITHM_CONSISTENT_HASH
+      hashMask: 24

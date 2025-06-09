@@ -1,0 +1,7 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: avinetworks-lbsvc
+  namespace: default
+  annotations:
+    ako.vmware.com/l4rule: l4rule-crd

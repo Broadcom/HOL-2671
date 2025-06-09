@@ -1,0 +1,75 @@
+- debug: msg="========================    Tshoot-BGP Setup    ========================"
+
+- name: Set Region B Variables
+  set_fact:
+    avi_credentials: "{{ avi_creds_region01b }}"
+    api_version: "{{ avi_creds_region01b.api_version }}"
+    region: b
+    site_a_asn: 65000
+    site_b_asn: 65001
+
+- name: Configure Site B BGP
+  import_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_config:
+      vrfcontext:
+        - name: global
+          cloud_ref: /api/cloud?name=Site{{region | upper}}_nsx_cloud
+          tenant_ref: /api/tenant/?name=admin
+          static_routes:
+          - next_hop:
+              addr: 172.16.230.1
+              type: V4
+            prefix:
+              ip_addr:
+                addr: 0.0.0.0
+                type: V4
+              mask: 0
+            route_id: 1
+          bgp_profile:
+            local_as: 65010
+            ibgp: false
+            peers:
+              - remote_as: "{{ site_a_asn }}"
+                peer_ip:
+                  addr: 172.16.120.11
+                  type: V4
+                subnet:
+                  ip_addr:
+                    addr: 172.16.220.0
+                    type: V4
+                  mask: 24
+                md5_secret: ""
+                bfd: false
+                advertise_vip: true
+                advertise_snat: true
+                advertisement_interval: 5
+                connect_timer: 10
+                ebgp_multihop: 0
+                shutdown: false
+                network_ref: /api/network?name=VM-RegionB01-vDS-COMP
+              - remote_as: "{{ site_a_asn }}"
+                peer_ip:
+                  addr: 172.16.120.12
+                  type: V4
+                subnet:
+                  ip_addr:
+                    addr: 172.16.220.0
+                    type: V4
+                  mask: 24
+                md5_secret: ""
+                bfd: false
+                advertise_vip: true
+                advertise_snat: true
+                advertisement_interval: 5
+                connect_timer: 10
+                ebgp_multihop: 0
+                shutdown: false
+                network_ref: /api/network?name=VM-RegionB01-vDS-COMP
+            keepalive_interval: 60
+            hold_time: 180
+            send_community: false
+            shutdown: false
+          system_default: true
+          lldp_enable: true

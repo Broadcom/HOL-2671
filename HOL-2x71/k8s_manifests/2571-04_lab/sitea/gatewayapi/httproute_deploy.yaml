@@ -1,0 +1,24 @@
+---
+##  Define children VS
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: canary-deploy
+spec:
+  parentRefs:
+  - name: gwapi-parent
+  hostnames:
+  - gwapi.region01a.vcf.sddc.lab
+  rules:
+  - backendRefs:
+    - name: avinetworks
+      port: 80
+## Canary deployment
+  # - matches:
+  #   - headers:
+  #     - type: Exact
+  #       name: env
+  #       value: canary
+  #   backendRefs:
+  #   - name: hackazon
+  #     port: 80

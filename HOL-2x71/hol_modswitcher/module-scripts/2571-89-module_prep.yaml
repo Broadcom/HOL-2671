@@ -1,0 +1,64 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Have we run before?
+      stat:
+        path: /hol/modswitcher_status.txt
+      register: statfile_exists
+    - name: Add a file in /hol with the command of playbook if we haven't run before
+      ansible.builtin.lineinfile:
+        path: /hol/modswitcher_status.txt
+        line: "{{ lookup('file', '/proc/self/cmdline') | regex_replace('\u0000',' ') }}"
+        create: yes
+      when: not statfile_exists.stat.exists
+    - block:
+      - name: "Mod switcher has run before, ending the play"
+        debug:
+          msg: "Mod switcher has run before, ending the play"
+      - meta: end_play
+      when: statfile_exists.stat.exists
+      
+  roles:
+    - role: avi-challenge-89-routing
+      vars:
+        avi_role_config_log_mode: 'False'
+  vars:
+    avi_creds_region01a:
+      controller: avicon-01a.vcf.sddc.lab
+      username: admin
+      password: VMware123!
+      api_version: 21.1.4
+    avi_creds_region01b:
+      controller: avicon-01b.vcf.sddc.lab
+      username: admin
+      password: VMware123!
+      api_version: 21.1.4
+  tasks:
+    - name: hacky workaround to avoid using inventory
+      add_host:
+        hostname: "k8sworker-01b.vcf.sddc.lab"
+        group: "slow_web_worker"
+
+- hosts: slow_web_worker
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: start slow web
+      shell:
+        cmd: '/usr/bin/docker run -it -d -p 8086:80 --cap-add=NET_ADMIN  -e delay="1000ms" -e loss="0%"  projects.registry.vmware.com/aviodyssey/nginx-tc:latest'
+      # docker_container:
+      #   name: "slow_web_server"
+      #   state: started
+      #   privileged: yes
+      #   env:
+      #     delay: "1000ms"
+      #     loss: "0%"
+      #   ports:
+      #     - "8086:80"
+      #   capabilities:
+      #     - NET_ADMIN
+      #   image: projects.registry.vmware.com/aviodyssey/nginx-tc:latest
+

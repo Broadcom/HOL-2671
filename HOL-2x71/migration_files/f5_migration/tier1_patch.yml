@@ -1,0 +1,26 @@
+#Version 1
+
+VirtualService:
+  - match_name: ".*"
+    patch:
+      vrf_context_ref: /api/vrfcontext/?name=t1-gw-sitea
+      enabled: true 
+      traffic_enabled: true
+ 
+VsVip:
+  - match_name: ".*"
+    patch:
+      vip:
+      - vip_id: 1
+        auto_allocate_ip: false
+        prefix_length: 32
+        placement_networks:
+        - network_ref: /api/network?name=ls-vmnet-a
+      tier1_lr: /infra/tier-1s/t1-gw-sitea
+      vrf_context_ref: /api/vrfcontext/?name=t1-gw-sitea
+ 
+Pool:
+  - match_name: ".*"
+    patch:
+      tier1_lr: /infra/tier-1s/t1-gw-sitea
+      vrf_ref: /api/vrfcontext/?name=t1-gw-sitea

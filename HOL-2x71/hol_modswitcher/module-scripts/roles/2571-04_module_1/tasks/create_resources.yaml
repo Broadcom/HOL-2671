@@ -1,0 +1,14 @@
+- name: Find Resource YAMLs
+  find:
+    paths: "{{ path + folder_name }}"
+    file_type: file
+    recurse: Yes
+    patterns: "*.yaml"
+  register: files_matched
+
+- kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', item.path) | from_yaml }}"
+    context: "{{ k8_context }}"
+  name: Deploy Resources
+  loop: "{{ files_matched.files }}"

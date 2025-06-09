@@ -1,0 +1,20 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    avi_credentials:
+      controller: "{{ controller_ip }}"
+      username: admin
+      password: "{{ avi_password }}"
+      api_version: 20.1.5
+  roles:
+    - role: avinetworks.avisdk
+  tasks:
+    - name: Controller properties
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        path: controllerproperties
+        http_method: put
+        data:
+          shared_ssl_certificates: true
+          api_idle_timeout: 1440

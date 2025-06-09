@@ -1,0 +1,13 @@
+# List the ESXi hosts to check on port 22
+esx-01a.corp.local:no
+esx-02a.corp.local:no
+esx-03a.corp.local:no
+##esx-04a.corp.local
+##esx-05a.corp.local
+##esx-06a.corp.local
+esx-01b.corp.local:no
+esx-02b.corp.local:no
+esx-03b.corp.local:no
+##esx-04b.corp.local
+##esx-05b.corp.local
+##esx-06b.corp.local

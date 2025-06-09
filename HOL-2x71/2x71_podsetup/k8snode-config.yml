@@ -1,0 +1,510 @@
+---
+- hosts: k8s
+  become: true
+  vars: 
+    antrea_version: v2.0.0
+    critools_version: 1.29.0
+    kube_version: v1.29.5
+    api_version: 22.1.5
+    ako_version: 1.12.1
+    amko_version: 1.12.1
+    helm_version: "v3.15.1"
+    node_version: 20
+    os: ubuntu
+
+  tasks:
+  # - name: Wait 900 seconds, but only start checking after 10 seconds
+  #   wait_for_connection:
+  #     delay: 10
+  #     timeout: 900
+
+  # - name: Getting pids for unattended-upgrade
+  #   pids:
+  #       name: unattended-upgrade
+  #   register: pids_of_unattended_upgrade
+  # #The pids module returns a list with which we can iterate over with with_items.Then we can use the wait_for task and the /proc filesystem to ensure all the processes have exited…
+
+  # - name: Wait for all mongod processes to exit
+  #   wait_for:
+  #     path: "/proc/{{ item }}/status"
+  #     state: absent
+  #   with_items: "{{ pids_of_unattended_upgrade.pids }}"
+
+  - name: Gathering facts
+    setup:
+
+  # - name: Disable IPv6 with sysctl
+  #   sysctl: name={{ item }} value=1 state=present reload=yes
+  #   with_items:
+  #     - net.ipv6.conf.all.disable_ipv6
+  #     - net.ipv6.conf.default.disable_ipv6
+  #     - net.ipv6.conf.lo.disable_ipv6
+  #   ignore_errors: yes
+  - lineinfile:
+      path: /etc/sudoers
+      state: present
+      insertafter: '^%sudo'
+      line: 'holuser ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+  
+  - name: Change root password
+    user:
+      name: root
+      password: "$y$j9T$x3q8Hek6tX7JV9yfxy87s0$DNCn4.9vU.d.l.uAQiSn/4syoxEi.x2Vsis7TfzIWz5"
+
+  - name: add holuser
+    ansible.builtin.user:
+      name: holuser
+      shell: /bin/bash
+      expires: -1
+  
+  - name: Change holuser password
+    user:
+      name: holuser
+      password:  "$y$j9T$x3q8Hek6tX7JV9yfxy87s0$DNCn4.9vU.d.l.uAQiSn/4syoxEi.x2Vsis7TfzIWz5"
+
+
+  - name: turn off password aging for holuser
+    ansible.builtin.user:
+      expires: -1
+      name: holuser
+      password_expire_min: 0
+      password_expire_max: 99999
+  - name: turn off password aging for root
+    ansible.builtin.user:
+      expires: -1
+      name: root
+      password_expire_min: 0
+      password_expire_max: 99999
+
+
+  - name: Remove proxy.sh if exists
+    ansible.builtin.file:
+      path: /etc/profile.d/proxy.sh
+      state: absent
+
+  - name: stop unattended upgrades service
+    service:
+      name: unattended-upgrades
+      state: stopped
+      enabled: no
+    when: os == "ubuntu"
+    ignore_errors: yes
+
+  - name: Update apt-get repo and cache
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    when: os == "ubuntu"
+
+  - name: remove cloudinit  (should be first, can't be rebooting with cloudinit still on there)
+    apt:
+      name: 
+        - cloud-init
+        - unattended-upgrades
+      state: absent
+      purge: true
+    notify:
+      - reboot_node
+      - reconnect
+    when: os == "ubuntu"
+    register: result
+    until: result is not failed
+    retries: 20
+    delay: 30
+
+  - name: Install the libselinux-python package
+    apt:
+      name:
+      - python3-selinux
+      - python3-sepolicy
+      state: present
+    when: os == "ubuntu"
+
+  - name: Remove lxd snap
+    community.general.snap:
+      name: lxd
+      state: absent
+    notify:
+      - reboot_node
+      - reconnect
+    when: os == "ubuntu"
+    ignore_errors: yes
+
+  - name: Upgrade all apt packages
+    apt: 
+      upgrade: dist
+      force_apt_get: yes
+    notify:
+      - reboot_node
+      - reconnect
+    when: os == "ubuntu"     
+    register: apt_res
+    delay: 15
+    retries: 100
+    until: apt_res is success
+
+  - name: Disable SELinux
+    selinux: 
+      state: disabled
+    notify:
+      - reboot_node
+      - reconnect
+
+  - name: Disable the ufw firewall (on Ubuntu, if configured).
+    service:
+      name: ufw
+      state: stopped
+      enabled: false
+    notify:
+      - reboot_node
+      - reconnect
+    when: os == "ubuntu"
+
+  - name: Add kernel mods for k8s
+    blockinfile:
+      path: /etc/modules-load.d/k8s.conf
+      block: |
+        br_netfilter
+        overlay
+      state: present
+      create: yes
+    notify:
+      - reboot_node
+      - reconnect
+
+  - name: Add sysctls for k8s
+    blockinfile:
+      path: /etc/sysctl.d/k8s.conf
+      block: |
+        net.ipv4.ip_forward = 1
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+      state: present
+      create: yes
+    notify:
+      - reboot_node
+      - reconnect
+
+  # - name: disable ipv6 in grub
+  #   lineinfile:
+  #     path: /etc/default/grub
+  #     regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+  #     line: 'GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1"'
+  #   register: tweaked_grub
+  #   notify:
+  #     - reboot_node
+  #     - reconnect
+
+  # - name: apply grub changes
+  #   shell:
+  #     cmd: update-grub
+  #   when: 
+  #     - os == "ubuntu"  
+  #     - tweaked_grub.changed == true
+
+
+  - name: Run the handlers right meow
+    meta: flush_handlers
+
+  - name: install pip and prereqs for Ubuntu
+    apt:
+      name: 
+        - pipenv
+        - zip
+        - unzip
+        - wget
+        - curl
+        - iproute2
+        - openssl
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+      state: latest
+      update_cache: yes
+    when: os == "ubuntu"
+
+  - name: install pip things
+    pip: 
+      name:       
+        - prompt-toolkit
+        - simple-term-menu
+        - openshift
+        - docker
+      executable: /usr/bin/pip3
+      state: latest
+
+  - name: add yq snap for kubernetes templating
+    community.general.snap:
+      name: yq
+    when: os == "ubuntu"
+
+
+  - name: Add Docker Module Repository
+    ansible.builtin.deb822_repository:
+      name: docker
+      types: [deb]
+      uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
+      signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+      suites: ["{{ ansible_distribution_release | lower }}"]
+      components: [stable]
+      state: present
+      enabled: yes
+
+
+  - name: Check that the daemon.json exists
+    stat:
+      path: /etc/docker/daemon.json
+    register: stat_result
+
+  - name: Remove daemon.json if exists
+    ansible.builtin.file:
+      path: /etc/docker/daemon.json
+      state: absent
+    when: stat_result.stat.exists
+
+  - name: Preconfigure docker cgroup driver
+    lineinfile:
+      path: /etc/docker/daemon.json
+      line: '{"exec-opts": ["native.cgroupdriver=systemd"]}'
+      state: present
+      create: yes
+    register: docker_daemon_json
+
+
+
+
+
+  - name: check docker service
+    systemd:
+      name: docker
+    register: docker_status
+    ignore_errors: yes
+
+
+  - name: restart dockerd if running and installed
+    service:
+      name: docker
+      state: restarted
+      enabled: yes
+    when:
+      - docker_status is defined
+      - docker_status.status.SubState == "running"
+      # - docker_daemon_json.changed == true
+      - not stat_result.stat.exists
+
+
+
+  - name: Install docker and its dependecies
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+    notify:
+      - docker status
+    when: os == "ubuntu"
+
+  ## cleaner way to do the following at https://github.com/geerlingguy/ansible-role-containerd/blob/master/tasks/main.yml
+
+  - name: Ensure containerd config directory exists.
+    file:
+      path: /etc/containerd
+      state: directory
+
+
+  - name: delete old containerd config
+    file:
+      name: /etc/containerd/config.toml
+      state: absent
+
+
+  - name: build default containerd config
+    shell:
+      cmd: 'containerd config default > /etc/containerd/config.toml'
+
+
+  - name: Replace a localhost entry searching for a literal string to avoid escaping
+    ansible.builtin.lineinfile:
+      path: /etc/containerd/config.toml
+      search_string: 'sandbox_image'
+      line: '    sandbox_image = "registry.k8s.io/pause:3.10"'
+
+
+  - name: Replace a localhost entry searching for a literal string to avoid escaping
+    ansible.builtin.lineinfile:
+      path: /etc/containerd/config.toml
+      search_string: 'SystemdCgroup'
+      line: '            SystemdCgroup = true'
+
+
+  - name: restart containerd if running and installed
+    service:
+      name: containerd
+      state: restarted
+      enabled: yes
+
+  #Step 2.2: Kubelet will not start if the system has swap enabled, so we are disabling swap using the below code.
+  - name: Remove swapfile from /etc/fstab
+    mount:
+      name: "{{ item }}"
+      fstype: swap
+      state: absent
+    with_items:
+      - swap
+      - none
+
+  - name: Disable swap
+    command: swapoff -a
+    #when: ansible_swaptotal_mb > 0
+
+
+  - name: add holuser to docker group
+    ansible.builtin.user:
+      name: holuser
+      groups: docker
+      append: yes
+
+  - name: Add Kubernetes APT repository
+    ansible.builtin.deb822_repository:
+      name: kubernetes
+      types: [deb]
+      uris: "https://pkgs.k8s.io/core:/stable:/{{ kube_version[:-2] }}/deb/"
+      signed_by: "https://pkgs.k8s.io/core:/stable:/{{ kube_version[:-2] }}/deb/Release.key"
+      suites: [/]
+      state: present
+      enabled: yes
+
+  - name: Install Kubernetes binaries
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet={{ kube_version[1:] }}-1.1
+        - kubeadm={{ kube_version[1:] }}-1.1
+        - kubectl={{ kube_version[1:] }}-1.1
+        - cri-tools={{ critools_version }}-1.1
+    when: os == "ubuntu"
+
+  - name: disable upgrade of kubelet, kubectl, kubeadm
+    block:
+      - name: kubelet hold
+        dpkg_selections:
+          name: kubelet
+          selection: hold
+      - name: kubeadm hold
+        dpkg_selections:
+          name: kubeadm
+          selection: hold
+      - name: kubectl hold
+        dpkg_selections:
+          name: kubectl
+          selection: hold
+      - name: cri-tools hold
+        dpkg_selections:
+          name: cri-tools
+          selection: hold        
+    when: os == "ubuntu"
+
+  - name: enable docker
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: enable containerd
+    service:
+      name: containerd
+      state: started
+      enabled: yes
+
+
+  - name: enable kubelet
+    service:
+      name: kubelet
+      state: started
+      enabled: yes
+
+  ###  stage containers
+
+  - name: Pull hackazon image
+    community.docker.docker_image:
+      name: projects.registry.vmware.com/nsx_alb/hackazon:latest
+      source: pull
+
+  - name: Pull aviweb image
+    community.docker.docker_image:
+      name: projects.registry.vmware.com/nsx_alb/avi_demoweb:v1
+      source: pull
+
+
+
+  - name: Pull ako image
+    community.docker.docker_image:
+      name: "projects.registry.vmware.com/ako/ako:{{ako_version}}"
+      source: pull
+
+  - name: Pull ako image
+    community.docker.docker_image:
+      name: "projects.registry.vmware.com/ako/amko:{{ako_version}}"
+      source: pull
+
+  - name: Create a directory for docker override
+    file:
+      path: /etc/systemd/system/docker.service.d
+      state: directory
+      mode: '0755'
+
+  - name: set up docker to use proxies
+    shell: |
+      cat > /etc/systemd/system/docker.service.d/http-proxy.conf <<EOF
+      [Service]
+      Environment="HTTP_PROXY=http://10.0.100.1:3128"
+      Environment="HTTPS_PROXY=http://10.0.100.1:3128"
+      Environment="NO_PROXY=localhost,127.0.0.0/8,::1,.corp.local,k8smaster-01a,k8smaster-01b,avicon-01a,avicon-01b,172.16.110.10,172.16.210.10,172.16.230.0/24,172.16.130.0/24,172.16.0.0/16"
+      EOF
+
+  - name: Restart docker
+    service:
+      name: docker
+      daemon_reload: yes
+      state: restarted
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+
+  handlers:
+    - name: reboot_node
+      reboot:
+
+    - name: reconnect
+      wait_for_connection:
+        connect_timeout: 20
+        sleep: 5
+        delay: 5
+        timeout: 300
+
+    - name: docker status
+      service: name=docker state=started
+  
+    - name: write proxy file
+      lineinfile:
+        path: /etc/profile.d/proxy.sh
+        line: |
+          export http_proxy=http://10.0.0.1:3128/
+          export https_proxy=http://10.0.0.1:3128/
+          export no_proxy=localhost,127.0.0.0/8,::1,.corp.local,k8smaster-01a,k8smaster-01b,avicon-01a,avicon-01b,172.16.110.10,172.16.210.10,172.16.230.0/24,172.16.130.0/24,172.16.0.0/16"
+          export NO_PROXY=$no_proxy
+          export HTTP_PROXY=$http_proxy
+          export HTTPS_PROXY=$https_proxy
+        create: yes
+        mode: '644'

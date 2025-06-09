@@ -1,0 +1,33 @@
+- debug: msg="========================    Tshoot-TASK-01    ========================"
+
+- name: Set Region B Variables
+  set_fact:
+    avi_credentials: "{{ avi_creds_region01a }}"
+    api_version: "{{ avi_creds_region01a.api_version }}"
+    pool_servers: "{{ pool_servers_region_a }}"
+    region_subnet: 172.16.130.0
+    region: a
+
+- name: Patch pool with a single server using patch op and avi_credentials
+  community.network.avi_pool:
+    avi_api_update_method: patch
+    avi_api_patch_op: add
+    avi_credentials: "{{avi_credentials}}"
+    name: demo-vs-pool
+    servers:
+      - 172.16.210.11:
+        ip:
+          addr: 172.16.210.11
+          type: 'V4'
+        port: '8086'
+  register: pool
+
+# - name: Start container on k8sworker-01b
+#   command: "sudo docker run -it -d -p 8086:80 --cap-add=NET_ADMIN  -e delay='1000ms' -e loss='20%'  projects.registry.vmware.com/aviodyssey/nginx-tc:latest"
+#   delegate_to: k8sworker-01b
+
+
+# - name: Start container on avitools
+#   command: "sudo docker run -it -d projects.registry.vmware.com/aviodyssey/slowhttptest:latest -c 10000 -H -i 10 -r 40 -t GET -u https://172.16.20.21/128k.txt -x 24 -p 3 -l 60000"
+#   delegate_to: 127.0.0.1
+

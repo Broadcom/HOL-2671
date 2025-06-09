@@ -1,0 +1,27 @@
+#version 1.0 - 19 September 2022
+
+# Nested Virtual Machines to be powered on
+#  if multiple vCenters, specify the FQDN of the owning vCenter after the colon
+# Optionally indicate a pause with the "Pause" record.  In this case the number
+#  after the colon is the number of seconds to wait before continuing.
+core-A:vcsa-01a.corp.vmbeans.com
+#Pause:10
+core-B:vcsa-01b.corp.vmbeans.com
+Pause:10
+edgenode-01a:vcsa-01a.corp.vmbeans.com
+edgenode-01b:vcsa-01b.corp.vmbeans.com
+Pause:10
+k8smaster-01a:vcsa-01a.corp.vmbeans.com
+k8smaster-01b:vcsa-01b.corp.vmbeans.com
+#SEG_SiteA-se-aqahf:vcsa-01a.corp.local
+#SEG_SiteA-se-zvxzd:vcsa-01a.corp.local
+#SEG_SiteB-se-hwgfh:vcsa-01b.corp.vmbeans.comns.com
+#SEG_SiteB-se-nysxg:vcsa-01b.corp.local
+Pause:15
+k8sworker-01a:vcsa-01a.corp.vmbeans.com
+k8sworker-02a:vcsa-01a.corp.vmbeans.com
+k8sworker-01b:vcsa-01b.corp.vmbeans.com
+k8sworker-02b:vcsa-01b.corp.vmbeans.com
+#linux-desk-01a:vcsa-01a.corp.vmbeans.com
+# if not using vCenter, specify the owning ESXi host
+#single-vm:esx-01a.corp.vmbeans.com

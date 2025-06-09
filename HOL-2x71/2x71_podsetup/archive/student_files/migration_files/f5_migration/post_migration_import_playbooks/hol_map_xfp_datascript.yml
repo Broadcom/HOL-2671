@@ -1,0 +1,139 @@
+---
+# Version 1
+
+- hosts: localhost
+  connection: local
+  roles:
+    - avinetworks.avisdk
+  gather_facts: no
+  tasks:
+  - name: Update x-forwarded-port datascript on hol-51-advanced-http-vs #Name of Ansible task
+    avi_virtualservice: #Calls the avi_virtualservice Ansible module
+      controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
+      username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      api_version: 22.1.3
+      tenant: hol #Destination tenant
+      name: hol-51-advanced-http-vs #Name of VS to patch
+      avi_api_update_method: patch #Update method
+      avi_api_patch_op: replace #Patch operation
+      vs_datascripts: #Datascripts applied on the data traffic of the virtual service
+      - index: 1 #Index number for the datascript
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port #Datascript to be applied to Virtual Service
+  - name: Update x-forwarded-port datascript on hol-52-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-52-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-53-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-53-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-54-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-54-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-55-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-55-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-56-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-56-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-57-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-57-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-58-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-58-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-59-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-59-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port
+  - name: Update x-forwarded-port datascript on hol-60-advanced-http-vs
+    avi_virtualservice:
+      controller: '{{ controller }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      api_version: 22.1.3
+      tenant: hol
+      name: hol-60-advanced-http-vs
+      avi_api_update_method: patch
+      avi_api_patch_op: replace
+      vs_datascripts:
+      - index: 1
+        vs_datascript_set_ref: /api/vsdatascriptset/?name=x-forwarded-port  
