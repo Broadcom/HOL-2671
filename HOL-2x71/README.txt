@@ -15,15 +15,15 @@ Product Details:
 
 For the vSphere Web Client, use:
 User name: administrator@vsphere.local
-Password: VMware123!
+Password: 
 
 For the Avi Controllers, use:
 User Name: admin
-Password: VMware123!
+Password: 
 
 For NSX Manager, use:
 User Name: admin
-Password: VMware123!VMware123!
+Password: 
 
 You can enter these passwords by hand, or use the VMware Learning Platform "Send Text" control and copy/paste from Lab Manual.
 

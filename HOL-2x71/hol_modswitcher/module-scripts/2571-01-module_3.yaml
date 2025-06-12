@@ -31,5 +31,5 @@
     avi_creds:
       controller: "{{ 'avicon-01' + region | lower + '.vcf.sddc.lab'}}"
       username: "admin"
-      password: "VMware123!"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       api_version: "22.1.3"

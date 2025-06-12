@@ -1,7 +1,0 @@
-#Linux services to be checked / started
-# must keep all ":"
-#server:service:passwd:waitsec
-# keep this if using a vCenter appliance
-vcsa-01a.corp.local:vsphere-ui:VMware1!:5
-# keep this if using a vCenter appliance (site B)
-vcsa-01b.corp.local:vsphere-ui:VMware1!:5

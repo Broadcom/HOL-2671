@@ -10,10 +10,10 @@ all:
     avi_controllers:
       hosts:
         avicon-01a.vcf.sddc.lab:
-          ansible_sudo_pass: 'VMware123!'
+          ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
           old_cluster_uuid: cluster-1a12c423-33ff-454f-8552-57beede1eaad
         avicon-01b.vcf.sddc.lab:
-          ansible_sudo_pass: 'VMware123!'
+          ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
           old_cluster_uuid: cluster-753ecd78-b7ab-4e30-850e-8dde1a71792e
     k8s:
       hosts:

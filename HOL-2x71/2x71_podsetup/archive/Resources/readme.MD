@@ -1,1 +1,0 @@
-This is the Resources folder for labstartup.  Files should be in /hol/Resources

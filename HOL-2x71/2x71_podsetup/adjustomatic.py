@@ -21,7 +21,7 @@ def main():
     #     #prepare the http connection to NSX Manager
     #     session = requests.Session()
     #     session.verify = False
-    #     session.auth = ('admin', 'VMware123!VMware123!')
+    #     session.auth = ('admin', os.environ["AVICTRL_PASS"])
     #     nsx_mgr = 'https://nsxmgr-01a.vcf.sddc.lab'
     #     fast_tcp_data = {
     #         'display_name': 'custom-fast-tcp',

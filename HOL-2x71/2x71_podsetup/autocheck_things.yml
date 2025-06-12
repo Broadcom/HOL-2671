@@ -9,7 +9,7 @@
       validate_certs: False
       hostname: "vcsa-01a.vcf.sddc.lab"
       username: "administrator@vsphere.local"
-      password: "VMware123!"
+      password: 
       name: "{{item}}"
       advanced_settings:
         - key: uuid.action

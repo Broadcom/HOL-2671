@@ -1,7 +1,7 @@
 # NSX Manager Vars
 nsxt_host = "nsxmgr-01a.vcf.sddc.lab"
 nsxt_username = "admin"
-nsxt_password = "VMware123!VMware123!"
+#nsxt_password = 
 
 # NSX Manager Infrastruture Objects Vars
 site_b_load_balancer_1 = "site_b_load_balancer_1"

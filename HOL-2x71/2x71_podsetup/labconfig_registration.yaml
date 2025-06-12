@@ -52,7 +52,7 @@
     ansible_connection: local
     avi_credentials:
       username: "admin"
-      password: "VMware123!"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       controller: avicon-01a.vcf.sddc.lab
       api_version: "30.2.1"
   
@@ -203,7 +203,7 @@
     ansible_connection: local
     avi_credentials:
       username: "admin"
-      password: "VMware123!"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       controller: avicon-01b.vcf.sddc.lab
       api_version: "30.2.1"
   

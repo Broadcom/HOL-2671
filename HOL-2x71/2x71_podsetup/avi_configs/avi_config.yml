@@ -9,7 +9,7 @@
     avi_credentials:
       controller: "{{ avi_controller }}"
       username: admin
-      password: "VMware123!"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
       api_version: "{{ api_version }}"
 
   collections:
@@ -30,7 +30,7 @@
       community.vmware.vmware_content_library_manager:
         hostname: "vcsa-01a.vcf.sddc.lab"
         username: '{{ vc_username }}'
-        password: 'VMware123!'
+        password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
         library_name: "avi_cl_site{{site_letter}}"
         library_description: 'Avi CL'
         library_type: local
@@ -75,7 +75,7 @@
       vmware.alb.avi_backupconfiguration:
         avi_credentials: "{{avi_credentials}}"
         name: "Backup-Configuration"
-        backup_passphrase: "VMware123!"
+        backup_passphrase: ""{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
         save_local: true
 
     - name: Controller properties
@@ -94,7 +94,7 @@
         tenant: admin
         nsxt_credentials:
           username: admin
-          password: VMware123!VMware123!
+          password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
 
     - name: make vcenter user credential
       vmware.alb.avi_cloudconnectoruser:
@@ -103,7 +103,7 @@
         tenant: admin
         vcenter_credentials:
           username: "{{vc_username}}"
-          password: VMware123!
+          password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
 
     - name: check NSX manager for ready
       ansible.builtin.uri:

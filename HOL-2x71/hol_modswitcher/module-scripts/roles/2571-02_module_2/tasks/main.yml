@@ -59,7 +59,7 @@
         dns_vses:
           - dns_vs_uuid: "{{ vs_global_dns_vs_01a['obj']['results'][0]['uuid'] }}"
         hm_shard_enabled: false
-        password: 'VMware123!'
+        password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
         port: 443
       - username: admin
         name: region01b
@@ -78,7 +78,7 @@
         dns_vses:
           - dns_vs_uuid: "{{ vs_global_dns_vs_01b['obj']['results'][0]['uuid'] }}"
         hm_shard_enabled: false
-        password: 'VMware123!'
+        password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
         port: 443
     dns_configs:
       - domain_name: gslb.vcf.sddc.lab

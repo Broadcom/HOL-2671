@@ -5,7 +5,7 @@
   vars: #Defines variables
     avi_credentials: #Dictionary of Avi Controller credentials
       username: "admin" #Avi Controller Username
-      password: "VMware123!" #Avi Controller Password
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }} #Avi Controller Password
       controller: "avicon-01a.vcf.sddc.lab" #Avi Controller FQDN
       api_version: "30.2.1" #Avi Controller Version
     deployment_name: ansible #Shortcut to prepend "ansible" to object names

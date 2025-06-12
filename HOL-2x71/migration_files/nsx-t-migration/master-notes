@@ -1,7 +1,7 @@
 Commands to run
 
 Working
-nsxt_converter.py --nsxt_ip nsxmgr-01b.corp.vmbeans.com --nsxt_user admin --nsxt_password 'VMware1!VMware1!' --alb_controller_ip avicon-01b.corp.vmbeans.com --alb_controller_version 22.1.3 --alb_controller_user admin --alb_controller_password VMware1! --ssh_root_password 'VMware1!VMware1!' -t admin  --cloud_tenant admin --not_in_use --no_object_merge -o nsx-migration --ansible --option auto-upload
+nsxt_converter.py --nsxt_ip nsxmgr-01b.corp.vmbeans.com --nsxt_user admin --nsxt_password <password> --alb_controller_ip avicon-01b.corp.vmbeans.com --alb_controller_version 22.1.3 --alb_controller_user admin --alb_controller_password <password> --ssh_root_password <password> -t admin  --cloud_tenant admin --not_in_use --no_object_merge -o nsx-migration --ansible --option auto-upload
 
 
 

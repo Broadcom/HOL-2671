@@ -37,7 +37,7 @@ configs:
 
 gslbLeaderCredentials:
   username: 'admin'
-  password: 'VMware123!'
+  password: # removed, see https://github.com/helm/helm/issues/10026 for possible options
 
 globalDeploymentPolicy:
   matchClusters:

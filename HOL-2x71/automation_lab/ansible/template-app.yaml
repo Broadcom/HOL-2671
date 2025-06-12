@@ -5,7 +5,7 @@
   vars:
     avi_credentials:
       username: "admin"
-      password: "VMware123!"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       controller: "avicon-01a.vcf.sddc.lab"
       api_version: "22.1.6"
 
