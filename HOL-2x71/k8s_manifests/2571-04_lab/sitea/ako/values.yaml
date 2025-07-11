@@ -107,7 +107,7 @@ ControllerSettings:
   serviceEngineGroupName: Default-Group   # Name of the ServiceEngine Group.
   controllerVersion: '30.2.1' # The controller API version
   cloudName: "SiteA_nsx_cloud"   # The configured cloud name on the Avi controller.
-  controllerHost: 'avicon-01a.vcf.sddc.lab' # IP address or Hostname of Avi Controller
+  controllerHost: 'alb-a.site-a.vcf.lab' # IP address or Hostname of Avi Controller
   tenantName: admin   # Name of the tenant where all the AKO objects will be created in AVI.
   vrfName: '' # Name of the VRFContext. All Avi objects will be under this VRF. Applicable only in Vcenter Cloud.
 

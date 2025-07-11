@@ -6,7 +6,7 @@
     avi_credentials:
       username: "admin"
       password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-      controller: "avicon-01a.vcf.sddc.lab"
+      controller: "alb-a.site-a.vcf.lab"
       api_version: "22.1.6"
 
   collections:

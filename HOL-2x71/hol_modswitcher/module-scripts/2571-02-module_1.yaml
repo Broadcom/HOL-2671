@@ -39,12 +39,7 @@
       password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       api_version: "22.1.3"
     avi_creds_region01a:
-      controller: "{{ 'avicon-01a.vcf.sddc.lab'}}"
-      username: "admin"
-      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-      api_version: "22.1.3"
-    avi_creds_region01b:
-      controller: "{{ 'avicon-01b.vcf.sddc.lab'}}"
+      controller: "{{ 'alb-a.site-a.vcf.lab'}}"
       username: "admin"
       password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
       api_version: "22.1.3"

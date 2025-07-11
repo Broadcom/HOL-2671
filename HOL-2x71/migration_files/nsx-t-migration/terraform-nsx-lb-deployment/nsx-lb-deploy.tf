@@ -19,7 +19,7 @@ resource "nsxt_policy_group" "backend-servers" {
 
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.site_b_pool_member_1_ip, var.site_b_pool_member_2_ip]
+      ip_addresses = [var.site_a_pool_member_1_ip, var.site_a_pool_member_2_ip]
     }
   }
 }
@@ -45,8 +45,8 @@ resource "nsxt_policy_lb_pool" "pool-01" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -54,8 +54,8 @@ resource "nsxt_policy_lb_pool" "pool-01" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -75,8 +75,8 @@ resource "nsxt_policy_lb_pool" "pool-02" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -84,8 +84,8 @@ resource "nsxt_policy_lb_pool" "pool-02" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -105,8 +105,8 @@ resource "nsxt_policy_lb_pool" "pool-03" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -114,8 +114,8 @@ resource "nsxt_policy_lb_pool" "pool-03" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -135,8 +135,8 @@ resource "nsxt_policy_lb_pool" "pool-04" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -144,8 +144,8 @@ resource "nsxt_policy_lb_pool" "pool-04" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -165,8 +165,8 @@ resource "nsxt_policy_lb_pool" "pool-05" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -174,8 +174,8 @@ resource "nsxt_policy_lb_pool" "pool-05" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -195,8 +195,8 @@ resource "nsxt_policy_lb_pool" "pool-06" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -204,8 +204,8 @@ resource "nsxt_policy_lb_pool" "pool-06" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -225,8 +225,8 @@ resource "nsxt_policy_lb_pool" "pool-07" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -234,8 +234,8 @@ resource "nsxt_policy_lb_pool" "pool-07" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -255,8 +255,8 @@ resource "nsxt_policy_lb_pool" "pool-08" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -264,8 +264,8 @@ resource "nsxt_policy_lb_pool" "pool-08" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -285,8 +285,8 @@ resource "nsxt_policy_lb_pool" "pool-09" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -294,8 +294,8 @@ resource "nsxt_policy_lb_pool" "pool-09" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -315,8 +315,8 @@ resource "nsxt_policy_lb_pool" "pool-10" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -324,8 +324,8 @@ resource "nsxt_policy_lb_pool" "pool-10" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -345,8 +345,8 @@ resource "nsxt_policy_lb_pool" "pool-11" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -354,8 +354,8 @@ resource "nsxt_policy_lb_pool" "pool-11" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -375,8 +375,8 @@ resource "nsxt_policy_lb_pool" "pool-12" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -384,8 +384,8 @@ resource "nsxt_policy_lb_pool" "pool-12" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -405,8 +405,8 @@ resource "nsxt_policy_lb_pool" "pool-13" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -414,8 +414,8 @@ resource "nsxt_policy_lb_pool" "pool-13" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -435,8 +435,8 @@ resource "nsxt_policy_lb_pool" "pool-14" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -444,8 +444,8 @@ resource "nsxt_policy_lb_pool" "pool-14" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -465,8 +465,8 @@ resource "nsxt_policy_lb_pool" "pool-15" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -474,8 +474,8 @@ resource "nsxt_policy_lb_pool" "pool-15" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -495,8 +495,8 @@ resource "nsxt_policy_lb_pool" "pool-16" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -504,8 +504,8 @@ resource "nsxt_policy_lb_pool" "pool-16" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -525,8 +525,8 @@ resource "nsxt_policy_lb_pool" "pool-17" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -534,8 +534,8 @@ resource "nsxt_policy_lb_pool" "pool-17" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -555,8 +555,8 @@ resource "nsxt_policy_lb_pool" "pool-18" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -564,8 +564,8 @@ resource "nsxt_policy_lb_pool" "pool-18" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -585,8 +585,8 @@ resource "nsxt_policy_lb_pool" "pool-19" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -594,8 +594,8 @@ resource "nsxt_policy_lb_pool" "pool-19" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -615,8 +615,8 @@ resource "nsxt_policy_lb_pool" "pool-20" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -624,8 +624,8 @@ resource "nsxt_policy_lb_pool" "pool-20" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30001"
         weight                     = 1
@@ -645,8 +645,8 @@ resource "nsxt_policy_lb_pool" "juice-pool" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_1_name
-        ip_address                 = var.site_b_pool_member_1_ip
+        display_name               = var.site_a_pool_member_1_name
+        ip_address                 = var.site_a_pool_member_1_ip
         max_concurrent_connections = 12
         port                       = "30003"
         weight                     = 1
@@ -654,8 +654,8 @@ resource "nsxt_policy_lb_pool" "juice-pool" {
     member {
         admin_state                = "ENABLED"
         backup_member              = false
-        display_name               = var.site_b_pool_member_2_name
-        ip_address                 = var.site_b_pool_member_2_ip
+        display_name               = var.site_a_pool_member_2_name
+        ip_address                 = var.site_a_pool_member_2_ip
         max_concurrent_connections = 12
         port                       = "30003"
         weight                     = 1

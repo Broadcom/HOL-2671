@@ -9,6 +9,6 @@ terraform {
 provider "avi" {
   avi_username             = "admin"
   avi_password             = var.avi_password
-  avi_controller           = "avicon-01a.vcf.sddc.lab"
+  avi_controller           = "alb-a.site-a.vcf.lab"
   avi_version              = "30.2.1"
 }

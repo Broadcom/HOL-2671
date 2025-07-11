@@ -4,44 +4,19 @@ all:
   children:
     lmc:
       hosts:
-        mainconsole.vcf.sddc.lab:
+        console.site-a.vcf.lab:
           connection: ssh
           remote_user: holuser          
     avi_controllers:
       hosts:
-        avicon-01a.vcf.sddc.lab:
+        alb-a.site-a.vcf.lab:
           ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-          old_cluster_uuid: cluster-b6647c06-c211-479b-b980-192608b408b7
-        avicon-01b.vcf.sddc.lab:
-          ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-          old_cluster_uuid: cluster-e9770b24-b325-4c2d-ab0a-972d76c13300
-    k8s:
+          #old_cluster_uuid: cluster-b6647c06-c211-479b-b980-192608b408b7
+    linuxhosts:
       hosts:
-        k8smaster-01a:
+        linux-01a:
           connection: ssh
-          ansible_user: root
-        k8sworker-01a:
+          ansible_user: holuser
+        linux-02a:
           connection: ssh
-          ansible_user: root
-        k8sworker-02a:
-          connection: ssh
-          ansible_user: root
-        k8smaster-01b:
-          connection: ssh
-          ansible_user: root
-        k8sworker-01b:
-          connection: ssh
-          ansible_user: root
-        k8sworker-02b:
-          connection: ssh
-          ansible_user: root
-    k8s_masters:
-      hosts:
-        k8smaster-01a:
-        k8smaster-01b:
-    k8s_workers:
-      hosts:
-        k8sworker-01a:
-        k8sworker-02a:
-        k8sworker-01b:
-        k8sworker-02b:
+          ansible_user: holuser

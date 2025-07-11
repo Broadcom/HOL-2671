@@ -1,5 +1,5 @@
 # NSX Manager Vars
-nsxt_host = "nsxmgr-01a.vcf.sddc.lab"
+nsxt_host = "nsx-wld01-01a"
 nsxt_username = "admin"
 #nsxt_password = 
 
@@ -8,10 +8,10 @@ site_b_load_balancer_1 = "site_b_load_balancer_1"
 tier1_name = "t1-gw-siteb"
 
 # Pool Member Vars
-site_b_pool_member_1_name = "k8sworker-01b"
-site_b_pool_member_1_ip = "172.16.210.11"
-site_b_pool_member_2_name = "k8sworker-02b"
-site_b_pool_member_2_ip = "172.16.210.12"
+site_a_pool_member_1_name = "linux-01a"
+site_a_pool_member_1_ip = "10.1.13.11"
+site_a_pool_member_2_name = "linux-02a"
+site_a_pool_member_2_ip = "10.1.13.12"
 http-30001 = "http-30001"
 
 # Profile Vars
@@ -27,6 +27,6 @@ custom-fast-tcp = "custom-fast-tcp"
 custom-fast-udp = "custom-fast-udp"
 
 #Other Vars
-student_desktop = "10.0.0.2"
+student_desktop = "10.1.10.130"
 hol-wildcard = "HOL wildcard"
 

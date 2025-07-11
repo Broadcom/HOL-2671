@@ -9,7 +9,7 @@ all:
       mgmt_default_gateway: 172.16.120.1
       data_default_gateway: 172.16.110.1
       vc_username: administrator@vsphere.local
-      avi_controller: avicon-01a.vcf.sddc.lab
+      avi_controller: alb-a.site-a.vcf.lab
       api_version: 30.2.1
       vcenter_url: vcsa-01a.vcf.sddc.lab
       mgmt_subnet: 172.16.120.0

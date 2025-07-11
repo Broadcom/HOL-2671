@@ -9,7 +9,7 @@
     - name: tweak noproxies in firefox (because it doesnt seem to honor system noproxy)
       ansible.builtin.lineinfile:
         path: /home/holuser/.mozilla/firefox/jx0nv8m0.default-release/user.js
-        line: 'user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, ::1, .vcf.sddc.lab, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, .region01a.vcf.sddc.lab,.region01b.vcf.sddc.lab,avicon-01a,avicon-01b");'
+        line: 'user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, ::1, .vcf.sddc.lab, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, lb.site-a.vcf.lab,.site-a.vcf.lab,alb-a");'
     - name:
       ansible.builtin.debug:
         msg: "placeholder"

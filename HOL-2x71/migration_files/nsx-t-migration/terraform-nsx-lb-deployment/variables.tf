@@ -24,22 +24,22 @@ variable "tier1_name" {
     type        = string
 }
 
-variable "site_b_pool_member_1_name" {
+variable "site_a_pool_member_1_name" {
     description = "Name of site b pool member one"
     type        = string
 }
 
-variable "site_b_pool_member_1_ip" {
+variable "site_a_pool_member_1_ip" {
     description = "IP Address of site b pool member one"
     type        = string
 }
 
-variable "site_b_pool_member_2_name" {
+variable "site_a_pool_member_2_name" {
     description = "Name of site b pool member two"
     type        = string
 }
 
-variable "site_b_pool_member_2_ip" {
+variable "site_a_pool_member_2_ip" {
     description = "IP Address of site b pool member two"
     type        = string
 }

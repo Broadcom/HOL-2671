@@ -158,6 +158,15 @@ try:
     shutdownList = updateShutdownList(shutdownList, vcfMgmtList, hostList)
     shutdownList = updateShutdownList(shutdownList, vcfList, hostList)
     shutdownList = updateShutdownList(shutdownList, vksList, hostList)
+
+    # add SEs to the list after Supervisors
+    if (core.isReachable(wldVcFqdn)):
+        for pattern in sepatterns:
+            wldRegexList = vmf.getVmsByRegex(wldVcFqdn, wldVcUsername, wldVcPassword, pattern)
+            shutdownList = updateShutdownList(shutdownList, wldRegexList, hostList)
+    else:
+        print(f"ERROR: Unable to connect to {wldVcFqdn}.")
+
     shutdownList = updateShutdownList(shutdownList, vcfNsxList, hostList)
     
     if len(shutdownList) > 0:
