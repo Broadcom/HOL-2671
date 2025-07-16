@@ -17,15 +17,13 @@ ST=California
 L=Palo Alto
 O=Broadcom
 OU=Hands-on Labs
-emailAddress=admin@vcf.sddc.lab
+emailAddress=admin@vcf.lab
 CN = alb-a.site-a.vcf.lab
 
 [ alt_names ]
 DNS.1 = alb-a.site-a.vcf.lab
-DNS.2 = avicon-01b.vcf.sddc.lab
-DNS.3 = *.region01a.vcf.sddc.lab
-DNS.4 = *.region01b.vcf.sddc.lab
-DNS.5 = *.app.region01a.vcf.sddc.lab
-DNS.6 = *.app.region01b.vcf.sddc.lab
-DNS.7 = *.gslb.vcf.sddc.lab
-DNS.8 = *.vcf.sddc.lab
+DNS.2 = *.site-a.vcf.lab
+DNS.3 = *.lb.site-a.vcf.lab
+DNS.4 = *.global.vcf.lab
+DNS.5 = *.site-b.vcf.lab
+DNS.6 = *.lb.site-b.vcf.lab

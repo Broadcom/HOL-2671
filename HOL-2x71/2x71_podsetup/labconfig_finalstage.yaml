@@ -373,7 +373,7 @@
       environment:
         http_proxy: http://proxy:3128
         https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
     - name: Unarchive terraform provider
       ansible.builtin.unarchive:
@@ -393,7 +393,7 @@
       environment:
         http_proxy: http://proxy:3128
         https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
     - name: Unarchive terraform provider
       ansible.builtin.unarchive:
@@ -409,7 +409,7 @@
 
     # - name: change system proxy settings, might be able to do this with dconf ansible module
     #   ansible.builtin.shell:
-    #     cmd: gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '.vcf.sddc.lab', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '.region01a.vcf.sddc.lab','.region01b.vcf.sddc.lab','avicon-01a','avicon-01b']"
+    #     cmd: gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '.site-a.vcf.lab', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '.region01a.site-a.vcf.lab','.region01b.site-a.vcf.lab','avicon-01a','avicon-01b']"
 
     - name: install vscode extension
       ansible.builtin.shell:
@@ -417,7 +417,7 @@
       environment:
         http_proxy: http://proxy:3128
         https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.vcf.sddc.lab,172.16.0.0/16, 192.168.0.0/16" 
+        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
 - hosts: k8s_masters
   vars:

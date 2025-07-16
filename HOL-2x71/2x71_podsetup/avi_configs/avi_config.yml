@@ -26,17 +26,6 @@
       retries: 300
       delay: 10
 
-    - name: Create Local Content Library
-      community.vmware.vmware_content_library_manager:
-        hostname: "vcsa-01a.vcf.sddc.lab"
-        username: '{{ vc_username }}'
-        password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-        library_name: "avi_cl_site{{site_letter}}"
-        library_description: 'Avi CL'
-        library_type: local
-        datastore_name: "Region01A-NFS-{{datastore_number}}"
-        validate_certs: false
-        state: present
 
     - name: Basic system configuration
       vmware.alb.avi_systemconfiguration:
@@ -45,7 +34,7 @@
         default_license_tier: ENTERPRISE
         dns_configuration:
           server_list:
-            - addr: "10.0.0.2"
+            - addr: 10.1.10.129
               type: V4
         ntp_configuration:
           # ntp_server_list:
@@ -53,10 +42,10 @@
           #     type: V4
           ntp_servers:
             - server:
-                addr: 10.0.100.1
+                addr: 10.1.10.129
                 type: V4
         proxy_configuration:
-          host: 10.0.0.1
+          host: 10.1.10.129
           port: 3128
 
     - pause:
@@ -75,7 +64,7 @@
       vmware.alb.avi_backupconfiguration:
         avi_credentials: "{{avi_credentials}}"
         name: "Backup-Configuration"
-        backup_passphrase: ""{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
+        backup_passphrase: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
         save_local: true
 
     - name: Controller properties
@@ -87,158 +76,30 @@
           shared_ssl_certificates: true
           api_idle_timeout: 1440
 
-    - name: make vcenter user credential
-      vmware.alb.avi_cloudconnectoruser:
-        avi_credentials: "{{avi_credentials}}"
-        name: nsx_admin
-        tenant: admin
-        nsxt_credentials:
-          username: admin
-          password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
-
-    - name: make vcenter user credential
-      vmware.alb.avi_cloudconnectoruser:
-        avi_credentials: "{{avi_credentials}}"
-        name: vcsa_admin
-        tenant: admin
-        vcenter_credentials:
-          username: "{{vc_username}}"
-          password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-
-    - name: check NSX manager for ready
-      ansible.builtin.uri:
-        url: https://nsxmgr-01a.vcf.sddc.lab/login.jsp
-        return_content: true        
-        validate_certs: no
-      register: nsx_content
-      failed_when: "'<title>VMware NSX | Login</title>' not in nsx_content.content"
-      until: nsx_content is not failed
-      retries: 30 
-      delay: 10 
-
-
-    - name: Retrieve Transport Zone
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{avi_credentials}}"
-        http_method: "post"
-        timeout: 300
-        path: "nsxt/transportzones"
-        data:
-          host: "nsxmgr-01a.vcf.sddc.lab"
-          credentials_uuid: "{{ lookup('avi', avi_credentials=avi_credentials, obj_name='nsx_admin', obj_type='cloudconnectoruser').uuid }}"
-      until: tz_obj is not failed
-      #failed_when: "'Error 500 Msg' in tz_obj.msg"
-      retries: 30
-      delay: 10
-      register: tz_obj
-  
-    - name: Retrieve vCenter Content Library
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{avi_credentials}}"
-        http_method: "post"
-        timeout: 300
-        path: "vcenter/contentlibraries"
-        data:
-          host: "vcsa-01a.vcf.sddc.lab"
-          credentials_uuid: "{{ lookup('avi', avi_credentials=avi_credentials, obj_name='vcsa_admin', obj_type='cloudconnectoruser').uuid }}"
-      register: content_library_obj
-
-    - name: Grab TZ ID field
-      set_fact:
-        tz_id:
-          transport_zone: "{{ tz_obj | json_query(tz_id_query) }}"
-      vars:
-        tz_id_query: "obj.resource.nsxt_transportzones[?name=='Overlay-TZ-{{site_letter | upper}}'].id"     
-
-    - name: Grab CL ID field
-      set_fact:
-        cl_id:
-          transport_zone: "{{ content_library_obj | json_query(cl_id_query) }}"
-      vars:
-        cl_id_query: "obj.resource.vcenter_clibs[?name=='avi_cl_site{{site_letter}}'].id"     
-
-    - name: make cloud
-      vmware.alb.avi_cloud:
-        avi_credentials: "{{avi_credentials}}"
-        name: "{{cloud_name}}"
+    - name: create the vip network 
+      vmware.alb.avi_network:
+        avi_credentials: "{{ avi_credentials }}"     
+        cloud_ref: /api/cloud?name=wld-a-nsx
+        configured_subnets:
+        - prefix:
+            ip_addr: 
+              addr: 10.1.13.128
+              type: V4
+            mask: 25
+          static_ip_ranges:
+            - range:
+              begin:
+                addr: 10.1.13.200
+                type: V4
+              end:
+                addr: 10.1.13.250
+                type: V4
+              type: "STATIC_IPS_FOR_VIP"
         dhcp_enabled: false
-        nsxt_configuration:
-          automate_dfw_rules: false
-          data_network_config:
-            tier1_segment_config:
-              manual:
-                tier1_lrs:
-                  - segment_id: "/infra/segments/ls-vmnet-{{site_letter}}"
-                    tier1_lr_id: "/infra/tier-1s/{{t1_name}}"
-              segment_config_mode: TIER1_SEGMENT_MANUAL
-            transport_zone: "{{tz_id.transport_zone | first}}"
-            tz_type: OVERLAY
-          domain_id: default
-          enforcementpoint_id: default
-          management_network_config:
-            overlay_segment:
-              segment_id: "/infra/segments/ls-avimgmt-{{site_letter}}"
-              tier1_lr_id: "/infra/tier-1s/{{t1_name}}"
-            transport_zone: "{{tz_id.transport_zone | first}}"
-            tz_type: OVERLAY
-          nsxt_credentials_ref: /api/cloudconnectoruser?name=nsx_admin
-          nsxt_url: "nsxmgr-01a.vcf.sddc.lab"
-          site_id: default
-        obj_name_prefix: "site{{site_letter}}"
-        prefer_static_routes: false
-        state_based_dns_registration: false
-        vtype: CLOUD_NSXT
-
-    - name: Create Vcenter Server
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{avi_credentials}}"
-        http_method: post
-        path: "vcenterserver"
-        data:
-          name: "site{{site_letter}}_vcsa"
-          vcenter_url: "{{vcenter_url}}"
-          cloud_ref: "/api/cloud/?name={{ cloud_name }}"
-          vcenter_credentials_ref: "/api/cloudconnectoruser/?name=vcsa_admin"
-          content_lib: 
-            id: "{{ content_library_obj.obj.resource.vcenter_clibs.0.id }}"
-      # ignore_errors: yes
-
-    - name: Check for cloud
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        http_method: get
-        path: cloud
-        params: 
-          name: "Site{{site_letter | upper}}_nsx_cloud"
-      register: cloud_lookup_result
-
-
-    - name: Check for network
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        http_method: get
-        path: networksubnetlist
-        params: 
-          cloud_uuid:  "{{ cloud_lookup_result['obj']['results'][0]['uuid'] }}"
-          name: "ls-vmnet-{{site_letter}}"
-      until: data_network_lookup_result.obj.results.0 is defined
-      retries: 30
-      delay: 10
-      register: data_network_lookup_result
-
-
-    - name: Check for network
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        http_method: get
-        path: networksubnetlist
-        params: 
-          cloud_uuid:  "{{ cloud_lookup_result['obj']['results'][0]['uuid'] }}"
-          name: "ls-avimgmt-{{site_letter}}"
-      until: mgmt_network_lookup_result.obj.results.0 is defined
-      retries: 30
-      delay: 10
-      register: mgmt_network_lookup_result
+        exclude_discovered_subnets: false
+        ip6_autocfg_enabled: false
+        name: vip_network_site-a
+        vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
 
 
     - name: create ipam for cloud
@@ -246,9 +107,9 @@
         avi_credentials: "{{ avi_credentials }}"
         internal_profile:
           usable_networks:
-            - nw_ref: "/api/network?name=ls-vmnet-{{site_letter}}"
+            - nw_ref: "/api/network?name=vip_network_site-a"
           ttl: 30
-        name: "ipam-region01{{site_letter}}"
+        name: "ipam-site-a"
         #tenant_ref: "/api/tenant?name=admin"
         type: IPAMDNS_TYPE_INTERNAL
       #when: ipam_lookup_result is not defined
@@ -257,95 +118,15 @@
     - name: create dns profile for cloud
       vmware.alb.avi_ipamdnsproviderprofile:
         avi_credentials: "{{ avi_credentials }}"
-        name: "dns-region01{{site_letter}}"
+        name: "dns-site-a"
         type: IPAMDNS_TYPE_INTERNAL_DNS
         internal_profile:
           dns_service_domain:
-          - domain_name: "region01{{site_letter}}.vcf.sddc.lab"
-          - domain_name: "app.region01{{site_letter}}.vcf.sddc.lab"
+          - domain_name: "lb.site-a.vcf.lab"
+          - domain_name: "app.lb.site-a.vcf.lab"
           ttl: 30
         tenant: admin
 
-
-
-    - name: Define vmware cloud configuration networking - apisession
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        path: "cloud/{{ cloud_lookup_result['obj']['results'][0]['uuid'] }}"
-        http_method: patch
-        data:
-          replace:
-            dns_provider_ref: "/api/ipamdnsproviderprofile?name=dns-region01{{site_letter}}"
-            ipam_provider_ref: "/api/ipamdnsproviderprofile?name=ipam-region01{{site_letter}}"
-
-
-    - name: add static range to mgmt network
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        path: "network/{{mgmt_network_lookup_result.obj.results.0.uuid}}"
-        http_method: patch
-        data:
-          replace:
-            dhcp_enabled: false
-            configured_subnets:
-            - prefix:
-                ip_addr:
-                  addr: "{{ mgmt_subnet }}"
-                  type: V4
-                mask: "24"
-              static_ip_ranges:
-              - range:
-                  begin:
-                    addr: "{{mgmt_range_start}}"
-                    type: V4
-                  end:
-                    addr: "{{mgmt_range_end}}"
-                    type: V4
-                type: STATIC_IPS_FOR_VIP_AND_SE
-  
-    - name: add static range to data network
-      vmware.alb.avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        path: "network/{{data_network_lookup_result.obj.results.0.uuid}}"
-        http_method: patch
-        data:
-          replace:
-            dhcp_enabled: false
-            configured_subnets:
-            - prefix:
-                ip_addr:
-                  addr: "{{ vip_subnet }}"
-                  type: V4
-                mask: "24"
-              static_ip_ranges:
-              - range:
-                  begin:
-                    addr: "{{vip_range_start}}"
-                    type: V4
-                  end:
-                    addr: "{{vip_range_end}}"
-                    type: V4
-                type: STATIC_IPS_FOR_VIP_AND_SE
-
-
-    - name: SE data nic route
-      vmware.alb.avi_vrfcontext:
-        avi_credentials: "{{avi_credentials}}"
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
-        name: "{{t1_name}}"
-        static_routes:
-        - next_hop:
-            addr: "{{ data_default_gateway }}"
-            type: V4
-          prefix:
-            ip_addr:
-              addr: 0.0.0.0
-              type: V4
-            mask: 0
-          route_id: 1
-        attrs:
-        - key: tier1path
-          value: "/infra/tier-1s/{{t1_name}}"
 
 
     - name: configure default se group for folder
@@ -457,10 +238,10 @@
     - name: Create controller cert for hol wildcard 
       vmware.alb.avi_sslkeyandcertificate:
         avi_credentials: "{{ avi_credentials }}"
-        key: "{{ lookup('file', '/lmchol/hol/ssl/avi_wildcardcert_key.pem') }}"
+        key: "{{ lookup('file', '/lmchol/hol/sslcerts/avi_wildcardcert_key.pem') }}"
         key_passphrase: ""
         certificate:
-          certificate: "{{ lookup('file', '/lmchol/hol/ssl/avi_wildcardcert.pem') }}"
+          certificate: "{{ lookup('file', '/lmchol/hol/sslcerts/avi_wildcardcert.pem') }}"
         type: SSL_CERTIFICATE_TYPE_SYSTEM
         name: "HandsOnLabs Controllercert"
         tenant: admin
@@ -468,10 +249,10 @@
     - name: Create app cert for hol wildcard
       vmware.alb.avi_sslkeyandcertificate:
         avi_credentials: "{{ avi_credentials }}"
-        key: "{{ lookup('file', '/lmchol/hol/ssl/avi_wildcardcert_key.pem') }}"
+        key: "{{ lookup('file', '/lmchol/hol/sslcerts/avi_wildcardcert_key.pem') }}"
         key_passphrase: ""
         certificate:
-          certificate: "{{ lookup('file', '/lmchol/hol/ssl/avi_wildcardcert.pem') }}"
+          certificate: "{{ lookup('file', '/lmchol/hol/sslcerts/avi_wildcardcert.pem') }}"
         type: SSL_CERTIFICATE_TYPE_VIRTUALSERVICE
         name: "HandsOnLabs_Appcert"
         tenant: admin
@@ -493,14 +274,14 @@
             ip:
               addr: "{{worker1}}"
               type: V4
-            hostname: "k8sworker-01{{site_letter}}"
+            hostname: "linux-01a"
           - port: 30001
             ip:
               addr: "{{worker2}}"
               type: V4
-            hostname: "k8sworker-02{{site_letter}}"
+            hostname: "linux-02a"
         tenant: admin
-      when: site_letter == 'a'
+
 
     - name: 'Create or Update VsVip: vsvip-dns-vs-01a-Default-Cloud'
       vmware.alb.avi_vsvip:
@@ -521,7 +302,7 @@
           auto_allocate_ip_type: V4_ONLY
           prefix_length: 32
         dns_info:
-        - fqdn: "dns-vs-01{{site_letter}}.region01{{site_letter}}.vcf.sddc.lab"
+        - fqdn: "dns-vs-01a.site-a.vcf.lab"
           ttl: 30
           type: DNS_RECORD_A
           algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
@@ -537,7 +318,7 @@
         vip:
         - vip_id: '1'
           ip_address:
-            addr: 172.16.130.11
+            addr: 10.1.13.130
             type: V4
           enabled: true
           auto_allocate_ip: false
@@ -546,12 +327,12 @@
           avi_allocated_fip: false
           auto_allocate_ip_type: V4_ONLY
         dns_info:
-        - fqdn: demo.region01a.vcf.sddc.lab
+        - fqdn: demo.site-a.vcf.lab
           ttl: 30
           type: DNS_RECORD_A
           algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
         tenant: admin
-      when: site_letter == 'a'
+
 
     - name: 'Create or Update VirtualService: dns-vs-01a'
       vmware.alb.avi_virtualservice:
@@ -640,7 +421,7 @@
         default_license_tier: ENTERPRISE
         dns_configuration:
           server_list:
-            - addr: 10.0.0.2
+            - addr: 10.1.10.129
               type: V4
         ntp_configuration:
           # ntp_server_list:
@@ -648,7 +429,7 @@
           #     type: V4
           ntp_servers:
             - server:
-                addr: 10.0.100.1
+                addr: 10.1.10.129
                 type: V4
         portal_configuration:
           allow_basic_authentication: true

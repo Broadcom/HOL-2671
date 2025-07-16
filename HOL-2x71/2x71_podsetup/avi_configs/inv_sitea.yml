@@ -2,23 +2,15 @@ all:
   hosts:
     localhost:
       ansible_python_interpreter: "{{ansible_playbook_python}}"
-      cloud_name: SiteA_nsx_cloud
+      cloud_name: wld-a-nsx
       site_letter: a
-      datastore_number: "1"
-      t1_name: t1-gw-sitea
-      mgmt_default_gateway: 172.16.120.1
-      data_default_gateway: 172.16.110.1
-      vc_username: administrator@vsphere.local
+      t1_name: t1-wld-a
+      avi_t1_name: wld-a-avi-mgmt
+      vc_username: administrator@wld.sso
       avi_controller: alb-a.site-a.vcf.lab
-      api_version: 30.2.1
-      vcenter_url: vcsa-01a.vcf.sddc.lab
-      mgmt_subnet: 172.16.120.0
-      mgmt_range_start: 172.16.120.50
-      mgmt_range_end: 172.16.120.199
-      vip_subnet: 172.16.110.0
-      vip_range_start: 172.16.110.50
-      vip_range_end: 172.16.110.99
-      worker1: 172.16.110.11
-      worker2: 172.16.110.12
-      dns_ip: 172.16.130.20
+      api_version: 31.1.1
+      vcenter_url: vc-wld01-a.site-a.vcf.lab
+      worker1: 10.1.13.11
+      worker2: 10.1.13.12
+      dns_ip: 10.1.13.131
       #old_cluster_uuid: cluster-1a12c423-33ff-454f-8552-57beede1eaad

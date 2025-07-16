@@ -11,10 +11,10 @@ def main():
     os.umask(0o0000)  ## lsfunctions sets a umask without execute, need to override or script-running things will die
     os.environ["http_proxy"] = "http://proxy:3128"
     os.environ["https_proxy"] = "http://proxy:3128"
-    os.environ["no_proxy"] = "localhost,127.0.0.0/8,::1,vcf.sddc.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"
+    os.environ["no_proxy"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"
     os.environ["HTTP_PROXY"] = "http://proxy:3128"
     os.environ["HTTPS_PROXY"] = "http://proxy:3128"
-    os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,vcf.sddc.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"  
+    os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"  
 
     try:
         lsf.write_output("Configuring NSX T App profiles")   
