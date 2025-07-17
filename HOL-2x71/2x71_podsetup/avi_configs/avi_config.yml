@@ -27,29 +27,29 @@
       delay: 10
 
 
-    - name: Basic system configuration
-      vmware.alb.avi_systemconfiguration:
-        avi_credentials: "{{ avi_credentials }}"
-        welcome_workflow_complete: true
-        default_license_tier: ENTERPRISE
-        dns_configuration:
-          server_list:
-            - addr: 10.1.10.129
-              type: V4
-        ntp_configuration:
-          # ntp_server_list:
-          #   - addr: 10.0.100.1
-          #     type: V4
-          ntp_servers:
-            - server:
-                addr: 10.1.10.129
-                type: V4
-        proxy_configuration:
-          host: 10.1.10.129
-          port: 3128
+    # - name: Basic system configuration
+    #   vmware.alb.avi_systemconfiguration:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     welcome_workflow_complete: true
+    #     default_license_tier: ENTERPRISE
+    #     dns_configuration:
+    #       server_list:
+    #         - addr: 10.1.10.129
+    #           type: V4
+    #     ntp_configuration:
+    #       # ntp_server_list:
+    #       #   - addr: 10.0.100.1
+    #       #     type: V4
+    #       ntp_servers:
+    #         - server:
+    #             addr: 10.1.10.129
+    #             type: V4
+    #     proxy_configuration:
+    #       host: 10.1.10.129
+    #       port: 3128
 
-    - pause:
-        seconds: 15
+    # - pause:
+    #     seconds: 15
 
     - name: Apply License Key
       vmware.alb.avi_api_session:
@@ -81,20 +81,20 @@
         avi_credentials: "{{ avi_credentials }}"     
         cloud_ref: /api/cloud/?name=wld-a-nsx
         configured_subnets:
-        - prefix:
-            ip_addr: 
-              addr: 10.1.13.128
-              type: V4
-            mask: 25
-          static_ip_ranges:
-            - range:
-              begin:
-                addr: 10.1.13.200
+          - prefix:
+              ip_addr: 
+                addr: 10.1.13.128
                 type: V4
-              end:
-                addr: 10.1.13.250
-                type: V4
-              type: "STATIC_IPS_FOR_VIP"
+              mask: 25
+            static_ip_ranges:
+              - range:
+                  begin:
+                    addr: 10.1.13.200
+                    type: V4
+                  end:
+                    addr: 10.1.13.250
+                    type: V4
+                type: "STATIC_IPS_FOR_VIP"
         dhcp_enabled: false
         exclude_discovered_subnets: false
         ip6_autocfg_enabled: false
@@ -135,7 +135,7 @@
         avi_api_update_method: patch
         avi_credentials: "{{ avi_credentials }}"
         name: Default-Group
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         se_name_prefix: "seg"
         disk_per_se: 25
         cpu_reserve: false
@@ -154,7 +154,7 @@
         avi_api_update_method: patch
         avi_credentials: "{{ avi_credentials }}"
         name: Default-Group
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         se_name_prefix: "seg"
         disk_per_se: 25
         cpu_reserve: false
@@ -415,28 +415,28 @@
     - name: Basic system configuration
       vmware.alb.avi_systemconfiguration:
         avi_credentials: "{{ avi_credentials }}"
-        avi_api_patch_op: replace
+        avi_api_patch_op: add
         avi_api_update_method: patch
-        welcome_workflow_complete: true
-        default_license_tier: ENTERPRISE
-        dns_configuration:
-          server_list:
-            - addr: 10.1.10.129
-              type: V4
-        ntp_configuration:
-          # ntp_server_list:
-          #   - addr: 10.0.100.1
-          #     type: V4
-          ntp_servers:
-            - server:
-                addr: 10.1.10.129
-                type: V4
-        portal_configuration:
-          allow_basic_authentication: true
-          api_force_timeout: 24
-          sslprofile_ref: "/api/sslprofile/?name=System-Standard-Portal"
-          sslkeyandcertificate_refs: 
-            - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
+        # welcome_workflow_complete: true
+        # default_license_tier: ENTERPRISE
+        # dns_configuration:
+        #   server_list:
+        #     - addr: 10.1.10.129
+        #       type: V4
+        # ntp_configuration:
+        #   # ntp_server_list:
+        #   #   - addr: 10.0.100.1
+        #   #     type: V4
+        #   ntp_servers:
+        #     - server:
+        #         addr: 10.1.10.129
+        #         type: V4
+        # portal_configuration:
+        #   allow_basic_authentication: true
+        #   api_force_timeout: 24
+        #   sslprofile_ref: "/api/sslprofile/?name=System-Standard-Portal"
+        #   sslkeyandcertificate_refs: 
+        #     - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
         dns_virtualservice_refs: 
           - "/api/virtualservice?name=dns-vs-01{{site_letter}}"
 
