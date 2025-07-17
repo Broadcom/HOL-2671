@@ -79,7 +79,7 @@
     - name: create the vip network 
       vmware.alb.avi_network:
         avi_credentials: "{{ avi_credentials }}"     
-        cloud_ref: /api/cloud?name=wld-a-nsx
+        cloud_ref: /api/cloud/?name=wld-a-nsx
         configured_subnets:
         - prefix:
             ip_addr: 
