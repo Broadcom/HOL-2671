@@ -8,13 +8,17 @@ def main():
     import os
     import requests
     import json
+    import file
     os.umask(0o0000)  ## lsfunctions sets a umask without execute, need to override or script-running things will die
+    password_file = "/home/holuser/creds.txt"
     os.environ["http_proxy"] = "http://proxy:3128"
     os.environ["https_proxy"] = "http://proxy:3128"
     os.environ["no_proxy"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"
     os.environ["HTTP_PROXY"] = "http://proxy:3128"
     os.environ["HTTPS_PROXY"] = "http://proxy:3128"
     os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"  
+    os.environ["AVICTRL_PASSWORD"] = file.readFile(password_file)
+    os.environ["TF_VAR_nsxt_password"] = file.readFile(password_file)
 
     try:
         lsf.write_output("Configuring NSX T App profiles")   
@@ -54,7 +58,7 @@ def main():
     try:
         lsf.write_output("Running first stages playbook")   
         # Playbook to run final config steps
-        result = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/labconfig_firststage.yaml", 
+        result = subprocess.run(["/home/holuser/py312venv/bin/ansible-playbook", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/labconfig_firststage.yaml", 
             "-i", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
             "/home/holuser/vaultsecret.txt"], capture_output=True, text=True, check=True)
         lsf.write_output(result)
@@ -75,7 +79,7 @@ def main():
     try:
         lsf.write_output("Running final stages playbook")   
         # Playbook to run final config steps
-        result = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", 
+        result = subprocess.run(["/home/holuser/py312venv/bin/ansible-playbook", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", 
             "-i", "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/inv_sitea.yml", "--vault-password-file", 
             "/home/holuser/vaultsecret.txt"], capture_output=True, text=True, check=True)
         lsf.write_output(result)

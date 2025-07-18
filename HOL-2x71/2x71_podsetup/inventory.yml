@@ -6,12 +6,12 @@ all:
       hosts:
         console.site-a.vcf.lab:
           connection: ssh
-          remote_user: holuser          
+          remote_user: holuser 
+          ansible_python_interpreter: "{{ansible_playbook_python}}"         
     avi_controllers:
       hosts:
         alb-a.site-a.vcf.lab:
-          ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
-          #old_cluster_uuid: cluster-b6647c06-c211-479b-b980-192608b408b7
+          ansible_sudo_pass: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
     linuxhosts:
       hosts:
         linux-01a:
