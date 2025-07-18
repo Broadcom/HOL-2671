@@ -2,6 +2,7 @@
 ---
 - hosts: lmc
   tasks:
+    - debug: var=ansible_env
     - name: Remove crash resume in firefox
       ansible.builtin.lineinfile:
         path: /home/holuser/snap/firefox/common/.mozilla/firefox/hu6lbvyx.default/user.js
