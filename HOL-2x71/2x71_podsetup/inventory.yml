@@ -8,6 +8,8 @@ all:
           connection: ssh
           remote_user: holuser 
           ansible_python_interpreter: "{{ansible_playbook_python}}"         
+          ansible_password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
+
     avi_controllers:
       hosts:
         alb-a.site-a.vcf.lab:
@@ -17,6 +19,8 @@ all:
         linux-01a:
           connection: ssh
           ansible_user: holuser
+          ansible_password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
         linux-02a:
           connection: ssh
           ansible_user: holuser
+          ansible_password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
