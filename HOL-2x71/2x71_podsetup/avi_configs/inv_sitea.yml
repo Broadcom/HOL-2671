@@ -8,7 +8,7 @@ all:
       t1_uuid: 349361ff-2844-4ad3-9f03-6ab52b47f5af
       avi_t1_name: wld-a-avi-mgmt
       vc_username: administrator@wld.sso
-      avi_controller: alb-a.site-a.vcf.lab
+      avi_controller: 10.1.1.90
       api_version: 31.1.1
       vcenter_url: vc-wld01-a.site-a.vcf.lab
       worker1: 10.1.13.11

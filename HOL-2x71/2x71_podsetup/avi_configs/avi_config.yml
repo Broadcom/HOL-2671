@@ -101,6 +101,14 @@
         name: vip_network_site-a
         vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
 
+    - name: Check for cloud
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: get
+        path: cloud
+        params: 
+          name: "{{ cloud_name }}"
+      register: cloud_lookup_result
 
     - name: create ipam for cloud
       vmware.alb.avi_ipamdnsproviderprofile:
@@ -127,6 +135,15 @@
           ttl: 30
         tenant: admin
 
+    - name: Define vmware cloud configuration networking - apisession
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        path: "cloud/{{ cloud_lookup_result['obj']['results'][0]['uuid'] }}"
+        http_method: patch
+        data:
+          replace:
+            dns_provider_ref: "/api/ipamdnsproviderprofile?name=dns-site-a"
+            ipam_provider_ref: "/api/ipamdnsproviderprofile?name=ipam-site-a"
 
 
     - name: configure default se group for folder
@@ -325,7 +342,7 @@
           avi_allocated_fip: false
           auto_allocate_ip_type: V4_ONLY
         dns_info:
-        - fqdn: demo.site-a.vcf.lab
+        - fqdn: demo.lb.site-a.vcf.lab
           ttl: 30
           type: DNS_RECORD_A
           algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
