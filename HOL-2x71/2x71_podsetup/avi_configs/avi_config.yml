@@ -317,7 +317,7 @@
           auto_allocate_ip_type: V4_ONLY
           prefix_length: 32
         dns_info:
-        - fqdn: "dns-vs-01a.site-a.vcf.lab"
+        - fqdn: "dns-vs-01a.lb.site-a.vcf.lab"
           ttl: 30
           type: DNS_RECORD_A
           algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
