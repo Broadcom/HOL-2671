@@ -11,7 +11,7 @@
     avi_virtualservice: #Calls the avi_virtualservice Ansible module
       controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
       username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
-      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=******) when running the ansible-playbook command
       tenant: hol #Destination tenant
       name: 51-hol-advanced-http-vs #Name of VS to patch
       avi_api_update_method: patch #Update method

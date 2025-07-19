@@ -13,7 +13,7 @@
       api_version: 22.1.3 #NSX ALB Version
       controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
       username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
-      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=******) when running the ansible-playbook command
       description: null
       http_profile: #Specifies the http application proxy profile parameters
         client_max_header_size: 32 #Client max header size

@@ -11,7 +11,7 @@
     avi_tenant: #Calls the avi_tenant Ansible module
       controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
       username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
-      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=******) when running the ansible-playbook command
       api_version: 22.1.3
       config_settings: #Tenant configuration settings for tenant
         se_in_provider_context: true #Service Engines are managed within the provider context , shared across tenants
