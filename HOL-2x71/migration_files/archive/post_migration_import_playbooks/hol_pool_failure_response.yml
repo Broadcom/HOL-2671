@@ -13,7 +13,7 @@
       api_version: '20.1.2' #API Version
       controller: '{{ controller }}' #Provides the IP/FQDN NSX ALB Controller. This variable is supplied with the -e flag (controller=avicon-01a.corp.vmbeans.com) when running the ansible-playbook command
       username: '{{ username }}' #Provides the username for the NSX ALB Controller. This variable is supplied with the -e flag (username=admin) when running the ansible-playbook command
-      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=VMware1!) when running the ansible-playbook command
+      password: '{{ password }}' #Provides the password for the NSX ALB Controller. This variable is supplied with the -e flag (password=V******) when running the ansible-playbook command
       tenant: hol #Destination tenant
       name: 51-hol-advanced-http-vs #Name of VS to patch
       cloud_ref: /api/cloud?name=Default-Cloud #Destination Cloud
