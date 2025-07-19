@@ -303,7 +303,7 @@
         avi_credentials: "{{ avi_credentials }}"
         name: "dns-vs-01{{site_letter}}-VsVip"
         vrf_context_ref: "/api/vrfcontext/?name={{t1_name}}"
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         tier1_lr: "/infra/tier-1s/{{t1_uuid}}"
         vip:
         - vip_id: '1'
@@ -328,7 +328,7 @@
         avi_credentials: "{{ avi_credentials }}"
         name: demo_vs-VsVip
         vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         tier1_lr: "/infra/tier-1s/{{t1_uuid}}"
         vip:
         - vip_id: '1'
@@ -357,7 +357,7 @@
         network_profile_ref: /api/networkprofile?name=System-UDP-Per-Pkt
         se_group_ref: /api/serviceenginegroup?name=Default-Group
         vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         analytics_profile_ref: /api/analyticsprofile?name=System-Analytics-Profile
         vsvip_ref: "/api/vsvip?name=dns-vs-01{{site_letter}}-VsVip"
         services:
@@ -392,7 +392,7 @@
         application_profile_ref: /api/applicationprofile?name=System-Secure-HTTP
         se_group_ref: /api/serviceenginegroup?name=Default-Group
         vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
-        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
         analytics_profile_ref: /api/analyticsprofile?name=System-Analytics-Profile
         vsvip_ref: /api/vsvip?name=demo_vs-VsVip
         services:
