@@ -9,7 +9,7 @@
     avi_credentials:
       controller: "{{ avi_controller }}"
       username: admin
-      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
+      password: "{{ lookup('ansible.builtin.file', '/home/holuser/creds.txt') }}"
       api_version: "{{ api_version }}"
 
   collections:
@@ -18,7 +18,7 @@
   tasks:
     - name: "Wait for the portal to become active"
       uri:
-        url: "https://{{ avi_controller }}/api/initial-data"
+        url: "https://{{ avi_controller_fqdn }}/api/initial-data"
         validate_certs: no
         status_code: 200
       register: result

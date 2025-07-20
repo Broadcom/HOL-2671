@@ -13,10 +13,10 @@ def main():
     password_file = "/home/holuser/creds.txt"
     os.environ["http_proxy"] = "http://proxy:3128"
     os.environ["https_proxy"] = "http://proxy:3128"
-    os.environ["no_proxy"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"
+    os.environ["no_proxy"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.1.1.90,10.0.0.0/8"
     os.environ["HTTP_PROXY"] = "http://proxy:3128"
     os.environ["HTTPS_PROXY"] = "http://proxy:3128"
-    os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.0.0.87,10.0.1.87,10.0.0.0/8"  
+    os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.1.1.90,10.0.0.0/8"  
     os.environ["AVICTRL_PASSWORD"] = open(password_file, 'r').read()
     os.environ["TF_VAR_nsxt_password"] = open(password_file, 'r').read()
 

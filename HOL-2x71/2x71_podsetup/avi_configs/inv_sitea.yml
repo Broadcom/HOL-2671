@@ -9,6 +9,7 @@ all:
       avi_t1_name: wld-a-avi-mgmt
       vc_username: administrator@wld.sso
       avi_controller: 10.1.1.90
+      avi_controller_fqdn: alb-a.site-a.vcf.lab
       api_version: 31.1.1
       vcenter_url: vc-wld01-a.site-a.vcf.lab
       worker1: 10.1.13.11
