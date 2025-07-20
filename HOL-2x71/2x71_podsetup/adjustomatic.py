@@ -100,7 +100,7 @@ def main():
     try:
         lsf.write_output("Running final stages playbook")   
         # Playbook to run final config steps
-        result = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", "/vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/labconfig_finalstage.yaml", 
+        result = subprocess.run(["/usr/bin/ansible-playbook", "/vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/labconfig_finalstage.yaml", 
             "-i", "/vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
             "/home/holuser/vaultsecret.txt"], capture_output=True, text=True, check=True)
         lsf.write_output(result)
