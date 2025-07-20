@@ -361,45 +361,45 @@
 ###
 ##########################################################################
 
-    - name: Creates directory
+    - name: Creates nsx-t terraform directory
       file:
-        path: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.6.1/linux_amd64
+        path: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.9.0/linux_amd64
         state: directory
 
-    - name: Download terraform provider
+    - name: Download nsx-t terraform provider
       ansible.builtin.get_url:
-        url: https://github.com/vmware/terraform-provider-nsxt/releases/download/v3.6.1/terraform-provider-nsxt_3.6.1_linux_amd64.zip
-        dest: /tmp/terraform-provider-nsxt_3.6.1_linux_amd64.zip
+        url: https://github.com/vmware/terraform-provider-nsxt/releases/download/v3.6.1/terraform-provider-nsxt_3.9.0_linux_amd64.zip
+        dest: /tmp/terraform-provider-nsxt_3.9.0_linux_amd64.zip
       environment:
         http_proxy: http://proxy:3128
         https_proxy: http://proxy:3128
         no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
-    - name: Unarchive terraform provider
+    - name: Unarchive nsx-t terraform provider
       ansible.builtin.unarchive:
-        src: /tmp/terraform-provider-nsxt_3.6.1_linux_amd64.zip
-        dest: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.6.1/linux_amd64
+        src: /tmp/terraform-provider-nsxt_3.9.0_linux_amd64.zip
+        dest: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.9.0/linux_amd64
         remote_src: yes
  
-    - name: Creates directory
-      file:
-        path: /hol/hol-2671/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
-        state: directory
+    # - name: Creates avi terraform provider directory
+    #   file:
+    #     path: /hol/hol-2671/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
+    #     state: directory
 
-    - name: Download terraform provider
-      ansible.builtin.get_url:
-        url: https://github.com/vmware/terraform-provider-avi/releases/download/v30.2.1/terraform-provider-avi_30.2.1_linux_amd64.zip
-        dest: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
-      environment:
-        http_proxy: http://proxy:3128
-        https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
+    # - name: Download avi terraform provider
+    #   ansible.builtin.get_url:
+    #     url: https://github.com/vmware/terraform-provider-avi/releases/download/v30.2.1/terraform-provider-avi_30.2.1_linux_amd64.zip
+    #     dest: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
+    #   environment:
+    #     http_proxy: http://proxy:3128
+    #     https_proxy: http://proxy:3128
+    #     no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
-    - name: Unarchive terraform provider
-      ansible.builtin.unarchive:
-        src: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
-        dest: /hol/hol-2671/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
-        remote_src: yes
+    # - name: Unarchive avi terraform provider
+    #   ansible.builtin.unarchive:
+    #     src: /tmp/terraform-provider-avi_30.2.1_linux_amd64.zip
+    #     dest: /hol/hol-2671/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64
+    #     remote_src: yes
 
 
     - name: Put terraform RC in home folder
