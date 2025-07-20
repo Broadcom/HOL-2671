@@ -7,7 +7,7 @@ spec:
   tls:
   - hosts:
       - secure-juice.region01b.vcf.sddc.lab
-    secretName: 2571-wc-tls
+    secretName: 2671-wc-tls
   rules:
   - host: secure-juice.region01b.vcf.sddc.lab
     http:

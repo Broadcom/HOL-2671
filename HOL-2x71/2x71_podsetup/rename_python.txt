@@ -1,2 +1,2 @@
 # oneliner to rename files and folders       
-python3 -c 'import os,shutil;list(map(lambda x:shutil.move(x,x.replace("2437","2571")),os.listdir(".")))'      
+python3 -c 'import os,shutil;list(map(lambda x:shutil.move(x,x.replace("2437","2671")),os.listdir(".")))'      

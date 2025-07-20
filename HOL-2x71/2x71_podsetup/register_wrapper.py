@@ -17,9 +17,9 @@ def main():
     # try:
     #     lsf.write_output("Configuring avi license")   
     #     r = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", 
-    #         "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/labconfig_registration.yaml", "-i", 
-    #         "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
-    #         "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
+    #         "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/labconfig_registration.yaml", "-i", 
+    #         "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
+    #         "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
     #         capture_output=True, text=True, check=True)
     #     lsf.write_output(r)
     #     # with open('/vpodrepo/pod_registered.txt', 'w') as f:
@@ -37,9 +37,9 @@ def main():
     lsf.write_output("Running preliminary tasks")
     try:
         r = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/labconfig_firststage.yaml", "-i", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/labconfig_firststage.yaml", "-i", 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/inventory.yml", "--vault-password-file", 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
             capture_output=True, text=True, check=True)
         lsf.write_output(r)
     except Exception as e:
@@ -55,9 +55,9 @@ def main():
     lsf.write_output("Configuring Site A Avi controller")
     try:
         r = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", "-i", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/inv_sitea.yml", "--vault-password-file", 
-             "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", "-i", 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/avi_configs/inv_sitea.yml", "--vault-password-file", 
+             "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
             capture_output=True, text=True, check=True)
         lsf.write_output(r)
     except Exception as e:
@@ -73,9 +73,9 @@ def main():
     lsf.write_output("Configuring Site B Avi controller")
     try:
         r = subprocess.run(["/home/holuser/.local/bin/ansible-playbook", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", "-i", 
-            "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/avi_configs/inv_siteb.yml", "--vault-password-file", 
-             "/vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/avi_configs/avi_config.yml", "-i", 
+            "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/avi_configs/inv_siteb.yml", "--vault-password-file", 
+             "/vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/vaultsecret.txt"], 
             capture_output=True, text=True, check=True)
         lsf.write_output(r)
     except Exception as e:
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     if not exists("/vpodrepo/pod_registered.txt"):
         main()
     else:
-        # this won't actually run in 2571, because the file write is commented out
+        # this won't actually run in 2671, because the file write is commented out
         lsf.write_output("This pod has already run registration, not running again")
 
 

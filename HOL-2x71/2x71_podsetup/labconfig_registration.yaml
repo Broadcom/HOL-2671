@@ -47,7 +47,7 @@
   collections:
     - vmware.alb
   vars_files:
-    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+    - /vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/secrets.yml
   vars:
     ansible_connection: local
     avi_credentials:
@@ -198,7 +198,7 @@
   collections:
     - vmware.alb
   vars_files:
-    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+    - /vpodrepo/2025-labs/2671/HOL-2x71/2x71_podsetup/secrets.yml
   vars:
     ansible_connection: local
     avi_credentials:

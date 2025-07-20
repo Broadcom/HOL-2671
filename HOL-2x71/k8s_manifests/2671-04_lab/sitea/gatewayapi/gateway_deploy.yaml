@@ -14,6 +14,6 @@ spec:
     tls:
       certificateRefs:
       - kind: Secret
-        name: 2571-wc-tls
+        name: 2671-wc-tls
         group: ""
 

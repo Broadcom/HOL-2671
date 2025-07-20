@@ -2,5 +2,5 @@
 
 #!/bin/bash
 export PYTHONUNBUFFERED=1
-/usr/bin/python3 /hol/hol-2571/hol_modswitcher/main_ui.py --dir /hol/hol-2571/hol_modswitcher/
+/usr/bin/python3 /hol/hol-2671/hol_modswitcher/main_ui.py --dir /hol/hol-2671/hol_modswitcher/
 

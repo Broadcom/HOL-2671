@@ -14,11 +14,11 @@ msdesktop = """
 Version=1.0
 Type=Application
 Terminal=false
-Exec=/hol/hol-2571/hol_modswitcher/uistart.sh
+Exec=/hol/hol-2671/hol_modswitcher/uistart.sh
 Name=Launch Module Switcher
 Comment=Module Switcher
 Categories=Application;
-Icon= /hol/hol-2571/hol_modswitcher/hol-logo.png
+Icon= /hol/hol-2671/hol_modswitcher/hol-logo.png
 Name[en_US.UTF-8]=Module Switcher
     """
 with open(f'{desktop}/{ms_shortcut}', "w") as f:

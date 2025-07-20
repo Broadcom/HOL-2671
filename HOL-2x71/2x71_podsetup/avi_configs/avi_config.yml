@@ -4,7 +4,7 @@
   connection: local
   gather_facts: yes
   vars_files:
-    - /vpodrepo/2025-labs/2571/HOL-2x71/2x71_podsetup/secrets.yml
+    - /vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/secrets.yml
   vars:
     avi_credentials:
       controller: "{{ avi_controller }}"

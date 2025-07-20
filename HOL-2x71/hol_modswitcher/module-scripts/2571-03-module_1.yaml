@@ -22,7 +22,7 @@
       when: statfile_exists.stat.exists
 
   roles:
-    - role: 2571-03
+    - role: 2671-03
       vars:
         region: a
         avi_config_state: present

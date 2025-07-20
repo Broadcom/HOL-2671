@@ -282,7 +282,7 @@ spec:
   tls:
   - hosts:
       - hipstershop.region01a.vcf.sddc.lab
-    secretName: 2571-wc-tls
+    secretName: 2671-wc-tls
   rules:
   - host: hipstershop.region01a.vcf.sddc.lab
     http:

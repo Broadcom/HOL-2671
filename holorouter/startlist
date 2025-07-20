@@ -41,6 +41,7 @@ production.cloudflare.docker.com
 registry.terraform.io
 github.com
 objects.githubusercontent.com
+release-assets.githubusercontent.com
 ## needed for avi documentation site, and kubernetes documentation
 avinetworks.com
 kubernetes.io

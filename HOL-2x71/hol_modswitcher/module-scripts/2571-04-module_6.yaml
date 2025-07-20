@@ -22,26 +22,26 @@
       when: statfile_exists.stat.exists
       
   roles:
-    - role: 2571-02_module_1
+    - role: 2671-02_module_1
       vars:
         region: 'b'
         avi_role_config_log_mode: 'False'
 
-    - role: 2571-02_module_1
+    - role: 2671-02_module_1
       vars:
         region: 'a'
         avi_role_config_log_mode: 'False'
 
-    - role: 2571-02_module_2
+    - role: 2671-02_module_2
       vars:
         region: 'a'
         avi_role_config_log_mode: 'False'
 
   tasks:
     - include_role: 
-        name: 2571-04_module_1
+        name: 2671-04_module_1
       vars:
-        path: "/hol/hol-2571/k8s_manifests/2571-04_lab/siteb/"
+        path: "/hol/hol-2671/k8s_manifests/2671-04_lab/siteb/"
         resource_list: ['services','ingress','crds']
         k8_context: "siteb"
         site_letter: "b"
@@ -52,9 +52,9 @@
 #####  Mod 4,5,6 prereqs  ########
 #provision AKO on site A and ingress
     - include_role: 
-        name: 2571-04_module_1
+        name: 2671-04_module_1
       vars:
-        path: "/hol/hol-2571/k8s_manifests/2571-04_lab/sitea/"
+        path: "/hol/hol-2671/k8s_manifests/2671-04_lab/sitea/"
         resource_list: ['ingress','crds']
         k8_context: "sitea"
         site_letter: "a"

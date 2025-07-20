@@ -1,6 +1,6 @@
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*        HOL-2571 VMware NSX Advanced Load Balancer (Avi Networks) labs         *
+*        HOL-2671 VMware NSX Advanced Load Balancer (Avi Networks) labs         *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
 Explore VMware NSX Advanced Load Balancer by Avi Networks to see how it easy it is to apply load
@@ -28,7 +28,7 @@ Password:
 You can enter these passwords by hand, or use the VMware Learning Platform "Send Text" control and copy/paste from Lab Manual.
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*         HOL-2571-01 VMware NSX Advanced Load Balancer by Avi Networks         *
+*         HOL-2671-01 VMware NSX Advanced Load Balancer by Avi Networks         *
 *                               Getting Started                                 *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
@@ -88,7 +88,7 @@ toolkit.
 
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*         HOL-2571-02 VMware NSX Advanced Load Balancer by Avi Networks         *
+*         HOL-2671-02 VMware NSX Advanced Load Balancer by Avi Networks         *
 *                         Global Server Load Balancing                          *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
@@ -145,7 +145,7 @@ policy functionality as well as other DNS features.
 
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*         HOL-2571-03 VMware NSX Advanced Load Balancer by Avi Networks         *
+*         HOL-2671-03 VMware NSX Advanced Load Balancer by Avi Networks         *
 *                           Web Application Security                            *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
@@ -200,7 +200,7 @@ Show how to use allowlists to override core rule set behavior.
 Show log hits from various test traffic, show analytics.
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*         HOL-2571-04 VMware NSX Advanced Load Balancer by Avi Networks         *
+*         HOL-2671-04 VMware NSX Advanced Load Balancer by Avi Networks         *
 *                           Avi Kubernetes Operator                             *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
@@ -265,7 +265,7 @@ Learn the differences between ClusterIP, NodePort, and NodePortLocal.
 
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*         HOL-2571-05 VMware NSX Advanced Load Balancer by Avi Networks         *
+*         HOL-2671-05 VMware NSX Advanced Load Balancer by Avi Networks         *
 *                                Migration                                      *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
@@ -296,7 +296,7 @@ Migrate and cut over from NSX-T LB to Avi.
 
 
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
-*                      HOL-2571-06 VMware Avi Load Balancer                     *
+*                      HOL-2671-06 VMware Avi Load Balancer                     *
 *                                Automation                                     *
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 

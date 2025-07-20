@@ -24,24 +24,24 @@
   roles:
 ########  Mod1,Mod2,Mod3 prereqs  ############
 # config GSLB infra
-    - role: 2571-02_module_1
+    - role: 2671-02_module_1
       vars:
         region: 'b'
         avi_role_config_log_mode: 'False'
 
-    - role: 2571-02_module_1
+    - role: 2671-02_module_1
       vars:
         region: 'a'
         avi_role_config_log_mode: 'False'
 
-    - role: 2571-02_module_2
+    - role: 2671-02_module_2
       vars:
         region: 'a'
         avi_role_config_log_mode: 'False'
 # config site B ako/amko/crds
-    - role: 2571-04_module_1
+    - role: 2671-04_module_1
       vars:
-        path: "/hol/hol-2571/k8s_manifests/2571-04_lab/siteb/"
+        path: "/hol/hol-2671/k8s_manifests/2671-04_lab/siteb/"
         resource_list: ['services','ingress','crds']
         k8_context: "siteb"
         site_letter: "b"
