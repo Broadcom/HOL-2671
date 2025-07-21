@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    avi_credentials:
+      username: "admin"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
+      controller: "alb-a.site-a.vcf.lab"
+      api_version: "22.1.6"
+
+  collections:
+    - vmware.alb
+
+  tasks:
+  - name: Get Pool Information using avi_api_session
+    vmware.alb.avi_virtualservice:
+      avi_credentials: "{{avi_credentials}}"
+      analytics_profile_ref: https://localhost/api/analyticsprofile/analyticsprofile-f137a230-863c-43ef-abfe-3f60f10b4b90
+      application_profile_ref: https://localhost/api/applicationprofile/applicationprofile-425045d5-b9bc-426d-8f2e-c31a9ba4dcc0
+      cloud_ref: https://localhost/api/cloud/cloud-6d875f7b-2da4-472a-ab79-1fd80e0b4b44
+      enabled: true
+      name: template-app
+      network_profile_ref: https://localhost/api/networkprofile/networkprofile-179e0d3b-c880-4eec-8949-b07bc91dc1dc
+      pool_ref: https://localhost/api/pool/pool-5fe03bb0-4b5c-4ab7-9f9b-39b7400c01a7
+      se_group_ref: https://localhost/api/serviceenginegroup/serviceenginegroup-82fad3e3-9141-4998-9aa1-4eb0e4c49de1
+      services:
+      - enable_ssl: false
+        port: 80
+      - enable_ssl: true
+        port: 443
+      ssl_key_and_certificate_refs:
+      - https://localhost/api/sslkeyandcertificate/sslkeyandcertificate-81c9826b-e0da-479b-aff8-17d8344b7e9d
+      - https://localhost/api/sslkeyandcertificate/sslkeyandcertificate-de919d6b-51b5-43fe-9c96-421828b88ee9
+      ssl_profile_ref: https://localhost/api/sslprofile/sslprofile-3b231437-e0d7-4b7d-ba33-2778ccb53292
+      tenant_ref: https://localhost/api/tenant/admin
+      uuid: virtualservice-723debd6-c6b4-4757-ab27-a7d5779a7722
+      vrf_context_ref: https://localhost/api/vrfcontext/vrfcontext-a34959c2-38cb-4bb7-b602-f1bf887e11c7
+      vsvip_ref: https://localhost/api/vsvip/vsvip-0f7771b2-ca69-4db1-b3ba-77b379a378f7

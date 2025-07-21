@@ -1,0 +1,115 @@
+---
+- hosts: k8s
+  become: true
+  vars: 
+    antrea_version: v2.0.0
+    critools_version: 1.29.0
+    kube_version: v1.29.5
+    api_version: 22.1.5
+    ako_version: 1.12.1
+    amko_version: 1.12.1
+    helm_version: "v3.15.1"
+    node_version: 20
+    os: ubuntu
+
+  tasks:
+    # - name: Gathering facts
+    #   setup:
+    # - name: Create a directory for docker override
+    #   file:
+    #     path: /etc/systemd/system/containerd.service.d
+    #     state: directory
+    #     mode: '0755'
+
+    # - name: set up docker to use proxies
+    #   shell: |
+    #     cat > /etc/systemd/system/containerd.service.d/http-proxy.conf <<EOF
+    #     [Service]
+    #     Environment="HTTP_PROXY=http://10.0.100.1:3128"
+    #     Environment="HTTPS_PROXY=http://10.0.100.1:3128"
+    #     Environment="NO_PROXY=localhost,127.0.0.0/8,::1,.corp.local,k8smaster-01a,k8smaster-01b,avicon-01a,avicon-01b,172.16.110.10,172.16.210.10,172.16.230.0/24,172.16.130.0/24,172.16.0.0/16"
+    #     EOF
+
+    # - name: Restart containerd
+    #   service:
+    #     name: containerd
+    #     daemon_reload: yes
+    #     state: restarted
+
+    # - name: Restart kubelet
+    #   service:
+    #     name: kubelet
+    #     daemon_reload: yes
+    #     state: restarted
+
+  ###  stage containers
+
+
+    # - name: Pull hackazon image
+    #   ansible.builtin.shell:
+    #     cmd: ctr -n=k8s.io image pull projects.registry.vmware.com/nsx_alb/hackazon:latest
+
+
+
+    # - name: Pull aviweb image
+    #   ansible.builtin.shell:
+    #     cmd: ctr -n=k8s.io image pull projects.registry.vmware.com/nsx_alb/avi_demoweb:v1
+
+    # - name: Pull kuard image
+    #   ansible.builtin.shell:
+    #     cmd: ctr -n=k8s.io image pull gcr.io/kuar-demo/kuard-amd64:3
+
+    # - name: Pull dvwa image
+    #   ansible.builtin.shell:
+    #     cmd: ctr -n=k8s.io image pull projects.registry.vmware.com/nsx_alb/dvwaserver:v1
+
+    # - name: Pull juiceshop image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull projects.registry.vmware.com/nsx_alb/juice-shop:latest"
+
+
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull projects.registry.vmware.com/ako/ako:{{ako_version}}"
+
+
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull projects.registry.vmware.com/ako/amko:{{ako_version}}"
+
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/emailservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/checkoutservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/recommendationservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/frontend:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/paymentservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/productcatalogservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/cartservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/loadgenerator:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/currencyservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/shippingservice:v0.10.0"
+    # - name: Pull ako image
+    #   ansible.builtin.shell:
+    #     cmd: "ctr -n=k8s.io image pull docker.io/library/redis:alpine"
+    - name: Pull ako image
+      ansible.builtin.shell:
+        cmd: "ctr -n=k8s.io image pull gcr.io/google-samples/microservices-demo/adservice:v0.3.9"

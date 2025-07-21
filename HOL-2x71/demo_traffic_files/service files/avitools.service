@@ -1,0 +1,18 @@
+[Unit]
+Description=avitools
+Requires=multi-user.target
+After=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker rm -f avitools
+ExecStartPre=/usr/bin/docker run -itd --name avitools --hostname avitools \
+    -v "/hol/hol-2671/migration_files:/opt/avi" \
+    us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/avitools:latest bash
+ExecStart=/usr/bin/docker wait avitools
+ExecStop=/usr/bin/docker stop avitools
+ExecStopPost=-/usr/bin/docker rm -f avitools
+
+[Install]
+WantedBy=multi-user.target

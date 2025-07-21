@@ -1,0 +1,96 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Have we run before?
+      stat:
+        path: /hol/modswitcher_status.txt
+      register: statfile_exists
+    - name: Add a file in /hol with the command of playbook if we haven't run before
+      ansible.builtin.lineinfile:
+        path: /hol/modswitcher_status.txt
+        line: "{{ lookup('file', '/proc/self/cmdline') | regex_replace('\u0000',' ') }}"
+        create: yes
+      when: not statfile_exists.stat.exists
+    - block:
+      - name: "Mod switcher has run before, ending the play"
+        debug:
+          msg: "Mod switcher has run before, ending the play"
+      - meta: end_play
+      when: statfile_exists.stat.exists
+
+  vars: 
+    avi_credentials:
+      controller: "alb-a.site-a.vcf.lab"
+      username: admin
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
+      api_version: "30.2.1"
+    cloud_name: SiteA_nsx_cloud
+    t1_name: t1-gw-sitea
+    worker1: 172.16.110.11
+    worker2: 172.16.110.12
+
+  tasks:
+
+    - name: Make template pool
+      vmware.alb.avi_pool:
+        avi_credentials: "{{ avi_credentials }}"
+        name: template-app-pool
+        cloud_ref: "/api/cloud/?name={{cloud_name}}"
+        health_monitor_refs:
+        - /api/healthmonitor?name=System-HTTP
+        lb_algorithm: LB_ALGORITHM_LEAST_CONNECTIONS
+        tier1_lr: "/infra/tier-1s/{{t1_name}}"
+        servers:
+          - port: 30001
+            ip:
+              addr: "{{worker1}}"
+              type: V4
+          - port: 30001
+            ip:
+              addr: "{{worker2}}"
+              type: V4
+
+    - name: Make template VSVIP
+      vmware.alb.avi_vsvip:
+        avi_credentials: "{{ avi_credentials }}"
+        name: "template-app-VsVip"
+        vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
+        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        tier1_lr: "/infra/tier-1s/{{t1_name}}"
+        vip:
+        - vip_id: '1'
+          auto_allocate_ip: true
+          auto_allocate_ip_type: V4_ONLY
+          ipam_network_subnet:
+            network_ref: /api/network?name=ls-vmnet-a
+        dns_info:
+        - fqdn: "template-app.region01a.vcf.sddc.lab"
+          ttl: 30
+          type: DNS_RECORD_A
+          algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+
+    - name: Make template VS
+      vmware.alb.avi_virtualservice:
+        avi_credentials: "{{ avi_credentials }}"
+        name: template-app
+        enabled: true
+        application_profile_ref: /api/applicationprofile?name=System-HTTP
+        vrf_context_ref: "/api/vrfcontext?name={{t1_name}}"
+        cloud_ref: "/api/cloud?name={{cloud_name}}"
+        vsvip_ref: /api/vsvip?name=template-app-VsVip
+        services:
+        - port: 80
+          enable_ssl: false
+          port_range_end: 80
+        - port: 443
+          enable_ssl: true
+          port_range_end: 443
+        network_profile_ref: /api/networkprofile?name=System-TCP-Proxy
+        pool_ref: /api/pool?name=template-app-pool
+        ssl_key_and_certificate_refs:
+        - /api/sslkeyandcertificate?name=HandsOnLabs_Appcert
+        - /api/sslkeyandcertificate?name=System-Default-Cert-EC
+        ssl_profile_ref: /api/sslprofile?name=System-Standard

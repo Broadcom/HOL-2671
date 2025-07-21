@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avinetworks
+spec:
+  selector:
+    matchLabels:
+      app: avinetworks
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: avinetworks
+    spec:
+      containers:
+      - name: avinetworks
+        image: projects.registry.vmware.com/nsx_alb/avi_demoweb:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: NOLOGO
+          value: "yes"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: avinetworks
+spec:
+  selector:
+    app: avinetworks
+  ports:
+  - protocol: TCP
+    name: http
+    port: 80
+    nodePort: 30001
+  type: NodePort

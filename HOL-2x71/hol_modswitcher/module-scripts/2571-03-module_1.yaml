@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Have we run before?
+      stat:
+        path: /hol/modswitcher_status.txt
+      register: statfile_exists
+    - name: Add a file in /hol with the command of playbook if we haven't run before
+      ansible.builtin.lineinfile:
+        path: /hol/modswitcher_status.txt
+        line: "{{ lookup('file', '/proc/self/cmdline') | regex_replace('\u0000',' ') }}"
+        create: yes
+      when: not statfile_exists.stat.exists
+    - block:
+      - name: "Mod switcher has run before, ending the play"
+        debug:
+          msg: "Mod switcher has run before, ending the play"
+      - meta: end_play
+      when: statfile_exists.stat.exists
+
+  roles:
+    - role: 2671-03
+      vars:
+        region: a
+        avi_config_state: present
+        avi_role_config_log_mode: 'False'
+
+  tasks: 
+  - name: start bot traffic
+    docker_container:
+      name: bot_traffic
+      state: started
+      env:
+        LOCUST_LOCUSTFILE: "dvwa_traffic_true_clientip_hol.py"
+        LOCUST_HEADLESS: "true"
+        LOCUST_USERS: "20"
+        LOCUST_HOST: "https://172.16.130.12"
+        LOCUST_SPAWN_RATE: "1"
+      image: projects.registry.vmware.com/nsx_alb/locust_demotraffic:v9-hol
+    register: result
+    retries: 3
+    delay: 3
+    until: result is succeeded
+
+  vars:
+    avi_creds:
+      controller: "{{ 'avicon-01' + region | lower + '.vcf.sddc.lab'}}"
+      username: "admin"
+      password: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}
+      api_version: "22.1.3"

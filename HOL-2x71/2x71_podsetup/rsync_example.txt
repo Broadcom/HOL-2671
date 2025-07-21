@@ -1,0 +1,7 @@
+rsync -avu /vpodrepo/2025-labs/2671/HOL-2x71/hol_modswitcher holuser@10.0.0.2:/hol/hol-2671
+
+rsync -avu /vpodrepo/2025-labs/2671/HOL-2x71/k8s_manifests holuser@10.0.0.2:/hol/hol-2671
+
+rsync -avu /vpodrepo/2025-labs/2671/HOL-2x71/migration_files holuser@10.0.0.2:/hol/hol-2671
+
+rsync -avu /vpodrepo/2025-labs/2671/HOL-2x71/automation_lab holuser@10.0.0.2:/hol/hol-2671

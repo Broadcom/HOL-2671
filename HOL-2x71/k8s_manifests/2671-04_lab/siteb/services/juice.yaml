@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: juice-cip
+  namespace: default
+spec:
+  selector:
+    app: juice
+  ports:
+  - protocol: TCP
+    name: http
+    port: 3000
+  type: ClusterIP

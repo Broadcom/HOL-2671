@@ -1,0 +1,2 @@
+the desktop position for modswitcher that we want after cleaning up desktop
+metadata::nautilus-icon-position 0,237

@@ -1,0 +1,19 @@
+#base playbook to tweak avi stuff.  Currently only setting a default route
+---
+- hosts: lmc
+  tasks:
+    - debug: var=ansible_env
+    - name: Remove crash resume in firefox
+      ansible.builtin.lineinfile:
+        path: /home/holuser/snap/firefox/common/.mozilla/firefox/hu6lbvyx.default/user.js
+        line: 'user_pref("browser.sessionstore.resume_from_crash", false);'
+    - name: tweak noproxies in firefox (because it doesnt seem to honor system noproxy)
+      ansible.builtin.lineinfile:
+        path: /home/holuser/snap/firefox/common/.mozilla/firefox/hu6lbvyx.default/user.js
+        line: 'user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, ::1, .site-a.vcf.lab, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, lb.site-a.vcf.lab,.site-a.vcf.lab,alb-a");'
+    - name:
+      ansible.builtin.debug:
+        msg: "placeholder"
+
+    # - name: tweak typoed bookmark
+    #   ansible.builtin.shell: /usr/bin/sqlite3 /home/holuser/.mozilla/firefox/jx0nv8m0.default-release/places.sqlite 'update moz_places set url = "http://mainconsole.vcf.sddc.lab:8888/lab/tree/notebooks/iWAF-Demo-notebook.ipynb" where id = 316'

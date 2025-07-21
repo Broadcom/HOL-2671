@@ -1,0 +1,112 @@
+formatVersion: 1
+name: LBaaS Demo
+version: 1
+### 
+### Inputs are fields where the user can provide the information
+### upon deployment to populate the corresponding fields in the blueprint
+###
+inputs:
+  port:
+    type: integer
+    title: Port
+    description: Destination port for insecure communications
+    default: 80
+  secure_port:
+    type: integer
+    title: SSL-encrypted port
+    description: Destination port for secure communications
+    default: 443
+  servers:
+    type: array
+    title: Servers
+    description: Input the server ip's to add to the pool. Leaving 0.0.0.0 will result in an empty pool being created.
+    items:
+      type: string
+    minItems: 0
+    default:
+      - 0.0.0.0
+  secure_app_profile:
+    type: boolean
+    default: false
+    title: Enable System-Secure-HTTP application profile
+    description: Allows for enhanced security features
+  fqdn:
+    type: boolean
+    default: false
+    title: DNS Record
+    description: Create a DNS record for this virtual service
+  fqdn_name:
+    type: string
+    title: Hostname
+    default: ''
+    description: Hostname portion of FQDN (must be DNS compliant name)
+  # healthmon_list:
+  #   type: string
+  #   title: precreated HM list from controller
+  #   default: None
+
+resources:
+  Idem_AVILB_POOL_1:
+    type: Idem.AVILB.APPLICATIONS.POOL
+    properties:
+      account: avicon-01a # cloud account to use with this object
+      name: ${env.deploymentName}-pool # Pool name
+      default_server_port: 80 # Default listening port for Pool
+      health_monitor_refs: # List of Health Monitors assigned to pool
+      - System-HTTP
+      lb_algorithm: LB_ALGORITHM_LEAST_CONNECTIONS # Pool load balancing algorithm
+      lb_algorithm_hash: LB_ALGORITHM_CONSISTENT_HASH_SOURCE_IP_ADDRESS # Hash used by load balancing algorithm
+      server_disable_type: DISALLOW_NEW_CONNECTION 
+      ###  This server map command will render the entered list of servers into an appropriate json string that is compatible with Avi API
+      servers: '${input.servers[0] == "0.0.0.0" ? null :map_by(input.servers, address => {"ip": {"addr": address, "type" : "V4"}})}'
+      ###
+      tier1_lr: t1-gw-sitea #Tier 1 router the pool will be attached to
+
+  Idem_AVILB_VS_VIP_1:
+    type: Idem.AVILB.APPLICATIONS.VS_VIP
+    properties:
+      account: avicon-01a # cloud account to use with this object
+      name: ${env.deploymentName}-vsvip # Name of VsVIP
+      dns_info: # DNS configuration
+      - algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
+        fqdn: "${input.fqdn_name}.region01a.vcf.sddc.lab" # VsVIP fqdn
+        ttl: 30 # Time To Live in seconds
+        type: DNS_RECORD_A # DNS record type
+      east_west_placement: false
+      tier1_lr: t1-gw-sitea # Tier 1 router VsVIP will be attached to
+      vip:
+      - auto_allocate_ip: true # Autoallocate IP address
+        auto_allocate_ip_type: V4_ONLY # Autoallocate an IPv4 IP address
+        enabled: true # Enable VsVIP
+        ipam_network_subnet:
+          network_ref: ls-vmnet-a # IPAM subnet to allocate IP address
+        vip_id: '1'
+      vrf_context_ref: t1-gw-sitea # VRF VsVIP will be created in
+
+  Idem_AVILB_VIRTUAL_SERVICE:
+    type: Idem.AVILB.APPLICATIONS.VIRTUAL_SERVICE
+    properties:
+      account: avicon-01a  # cloud account to use with this object
+      name: vs-${env.deploymentName} # name of virtual service
+      ####
+      ## For Application profile, we're using a Java Ternary Operator
+      ## It is a conditional where based on the state of the boolean input
+      ## for secure_app_profile, it will change the application profile appled to the VS
+      application_profile_ref: '${input.secure_app_profile == true ? "/api/applicationprofile?name=System-Secure-HTTP" : "/api/applicationprofile?name=System-HTTP"}'
+      ####
+      enabled: true #Enables virtual service
+      network_profile_ref: System-TCP-Proxy # Network profile attached to virtual service
+      pool_ref: ${resource.Idem_AVILB_POOL_1.name} # Reference to pool object in blueprint
+      services: 
+      - enable_ssl: false # SSL disable
+        port: ${input.port} # Variable corresponding to cleartext listening port
+      - enable_ssl: true  # SSL enable
+        port: ${input.secure_port} # Variable corresponding to encrypted listening port
+      ssl_key_and_certificate_refs: # List of SSL Certificates attached to virtual service
+      - HandsOnLabs_Appcert
+      - System-Default-Cert-EC
+      ssl_profile_ref: System-Standard # SSL Profile attached to virtual service
+      vrf_context_ref: t1-gw-sitea # VRF virtual service will be created in
+      vsvip_ref: ${resource.Idem_AVILB_VS_VIP_1.name} # Reference to VSVIP object in blueprint
+
+

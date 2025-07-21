@@ -1,0 +1,12 @@
+---
+- include_tasks: deploy_ako.yaml
+  when: ako_version is defined
+
+- include_tasks: deploy_amko.yaml
+  when: amko_version is defined
+
+- include_tasks: create_resources.yaml
+  loop: "{{ resource_list }}"
+  loop_control:
+    loop_var: folder_name
+  when: resource_list | length > 0

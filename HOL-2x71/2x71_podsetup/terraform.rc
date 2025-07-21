@@ -1,0 +1,5 @@
+provider_installation {
+  dev_overrides {
+      "vmware/nsxt" = "/hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.6.1/linux_amd64"
+      "vmware/avi" = "/hol/hol-2671/automation_lab/terraform/.terraform/providers/registry.terraform.io/vmware/avi/30.2.1/linux_amd64"
+}}

@@ -1,0 +1,44 @@
+---
+- hosts: k8s
+  become: true
+  vars: 
+    antrea_version: v2.0.0
+    critools_version: 1.29.0
+    kube_version: v1.29.5
+    api_version: 22.1.5
+    ako_version: 1.12.1
+    amko_version: 1.12.1
+    helm_version: "v3.15.1"
+    node_version: 20
+    os: ubuntu
+
+  tasks:
+  - name: disable upgrade of kubelet, kubectl, kubeadm
+    block:
+      - name: kubelet hold
+        dpkg_selections:
+          name: kubelet
+          selection: deinstall
+      - name: kubeadm hold
+        dpkg_selections:
+          name: kubeadm
+          selection: deinstall
+      - name: kubectl hold
+        dpkg_selections:
+          name: kubectl
+          selection: deinstall
+      - name: cri-tools hold
+        dpkg_selections:
+          name: cri-tools
+          selection: deinstall
+  - name: Install Kubernetes binaries
+    apt: 
+      name: "{{ packages }}"
+      state: absent
+      update_cache: yes
+    vars:
+      packages:
+        - kubelet
+        - kubeadm
+        - kubectl
+        - cri-tools

@@ -1,0 +1,20 @@
+[Unit]
+Description=Jupyter PSM Demo
+Requires=multi-user.target
+After=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker rm -f jupyter_demo
+ExecStartPre=/usr/bin/docker run -d --name jupyter_demo \
+    -p 8888:8888 -e C_ENV=hol_env --dns 10.0.0.2 \
+    projects.registry.vmware.com/nsx_alb/psm_jupyter_demo:v22.1.4-hol3
+ExecStart=/usr/bin/docker wait jupyter_demo
+ExecStop=/usr/bin/docker stop jupyter_demo
+ExecStopPost=-/usr/bin/docker rm -f jupyter_demo
+
+[Install]
+WantedBy=multi-user.target
+
+

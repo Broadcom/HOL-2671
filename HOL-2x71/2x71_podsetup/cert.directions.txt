@@ -1,0 +1,2 @@
+openssl req -new -newkey rsa:2048 -nodes -config holcert.cnf -keyout avi_wildcardcert_key.pem -out avi_wildcardcert.csr
+openssl ca -config /hol/ca/ca.conf -out avi_wildcardcert.pem -infiles ./avi_wildcardcert.csr

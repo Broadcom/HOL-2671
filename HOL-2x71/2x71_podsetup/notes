@@ -1,0 +1,20 @@
+
+#stuff to pass autocheck, should ansibleize
+
+sudo passwd root
+sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+sudo sed -i 's/#NTP=/NTP=192.168.100.1/' /etc/systemd/timesyncd.conf
+sudo systemctl restart ssh
+sudo systemctl restart systemd-timesyncd
+
+# interactive
+sudo dpkg-reconfigure unattended-upgrades
+
+sudo apt-get upgrade -y
+sudo apt clean
+
+sudo tune2fs -c 0 /dev/mapper/ubuntu--vg-ubuntu--lv
+
+
+chage -I -1 -m 0 -M 99999 -E -1 root
+chage -I -1 -m 0 -M 99999 -E -1 holuser

@@ -1,0 +1,36 @@
+apiVersion: kubeadm.k8s.io/v1beta3
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  token: abcdef.0123456789abcdef
+  ttl: 0m
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: 172.16.210.10
+  bindPort: 6443
+nodeRegistration:
+  imagePullPolicy: IfNotPresent
+  name: k8smaster-01b
+  taints: null
+---
+apiServer:
+  timeoutForControlPlane: 4m0s
+apiVersion: kubeadm.k8s.io/v1beta3
+certificatesDir: /etc/kubernetes/pki
+clusterName: k8s-siteb
+controllerManager: {}
+dns: {}
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: registry.k8s.io
+kind: ClusterConfiguration
+kubernetesVersion: 1.29.5
+networking:
+  podSubnet: 10.20.0.0/16
+  dnsDomain: clusterb.local
+  serviceSubnet: 10.96.0.0/12
+scheduler: {}

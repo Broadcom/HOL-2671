@@ -1,0 +1,18 @@
+all:
+  hosts:
+    localhost:
+      ansible_python_interpreter: "{{ansible_playbook_python}}"
+      cloud_name: wld-a-nsx
+      site_letter: a
+      t1_name: t1-wld-a
+      t1_uuid: 349361ff-2844-4ad3-9f03-6ab52b47f5af
+      avi_t1_name: wld-a-avi-mgmt
+      vc_username: administrator@wld.sso
+      avi_controller: 10.1.1.90
+      avi_controller_fqdn: alb-a.site-a.vcf.lab
+      api_version: 31.1.1
+      vcenter_url: vc-wld01-a.site-a.vcf.lab
+      worker1: 10.1.13.11
+      worker2: 10.1.13.12
+      dns_ip: 10.1.13.131
+      #old_cluster_uuid: cluster-1a12c423-33ff-454f-8552-57beede1eaad

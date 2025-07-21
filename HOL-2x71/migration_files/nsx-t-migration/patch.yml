@@ -1,0 +1,7 @@
+VirtualService:
+  - match_name: ".*"
+    patch:
+      analytics_policy:
+          all_headers: true
+          full_client_logs:
+            enabled: false

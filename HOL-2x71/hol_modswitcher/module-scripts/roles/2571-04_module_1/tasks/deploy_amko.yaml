@@ -1,0 +1,23 @@
+# to view this thing
+# kubectl get secret -n avi-system gslb-config-secret -o jsonpath="{.data['gslb\-members']}" | base64 --decode
+- name: Create a AMKO Config Secret
+  kubernetes.core.k8s:
+    name: gslb-config-secret
+    api_version: v1
+    kind: Secret
+    definition:
+      type: Opaque
+      data: 
+        gslb-members: "{{ lookup('file', '/home/holuser/.kube/config') | b64encode }}"
+    namespace: avi-system
+    context: "{{ k8_context }}"
+    state: present
+- name: Deploy AMKO
+  kubernetes.core.helm:
+    name: amko
+    chart_ref: oci://projects.registry.vmware.com/ako/helm-charts/amko
+    chart_version: "{{ amko_version }}"
+    release_namespace: avi-system
+    create_namespace: yes
+    values: "{{ lookup('file', path + 'amko/values.yaml') | from_yaml }}"
+    kube_context: "{{ k8_context }}"

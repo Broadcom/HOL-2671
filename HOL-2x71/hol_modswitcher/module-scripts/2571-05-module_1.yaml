@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+    - name: Have we run before?
+      stat:
+        path: /hol/modswitcher_status.txt
+      register: statfile_exists
+    - name: Add a file in /hol with the command of playbook if we haven't run before
+      ansible.builtin.lineinfile:
+        path: /hol/modswitcher_status.txt
+        line: "{{ lookup('file', '/proc/self/cmdline') | regex_replace('\u0000',' ') }}"
+        create: yes
+      when: not statfile_exists.stat.exists
+    - block:
+      - name: "Mod switcher has run before, ending the play"
+        debug:
+          msg: "Mod switcher has run before, ending the play"
+      - meta: end_play
+      when: statfile_exists.stat.exists
+
+  tasks:
+    - name: init and push
+      community.general.terraform:
+        project_path: '/hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment'
+        state: present

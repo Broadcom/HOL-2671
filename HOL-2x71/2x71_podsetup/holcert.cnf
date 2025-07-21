@@ -1,0 +1,29 @@
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = v3_req
+distinguished_name = dn
+default_days    = 1825
+
+
+[ v3_req ]
+subjectAltName = @alt_names
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+[ dn ]
+C=US
+ST=California
+L=Palo Alto
+O=Broadcom
+OU=Hands-on Labs
+emailAddress=admin@vcf.lab
+CN = alb-a.site-a.vcf.lab
+
+[ alt_names ]
+DNS.1 = alb-a.site-a.vcf.lab
+DNS.2 = *.site-a.vcf.lab
+DNS.3 = *.lb.site-a.vcf.lab
+DNS.4 = *.global.vcf.lab
+DNS.5 = *.site-b.vcf.lab
+DNS.6 = *.lb.site-b.vcf.lab

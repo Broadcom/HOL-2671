@@ -1,0 +1,11 @@
+---
+- name: Deploy AKO
+  kubernetes.core.helm:
+    name: "ako-{{ k8_context }}"
+    #chart_ref: oci://projects.registry.vmware.com/ako/helm-charts/ako
+    chart_ref: "{{path}}/ako"
+    chart_version: "{{ ako_version }}"
+    release_namespace: avi-system
+    create_namespace: yes
+    values: "{{ lookup('file', '{{path}}/ako/values.yaml') | from_yaml }}"
+    kube_context: "{{ k8_context }}"    
