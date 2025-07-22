@@ -1,110 +1,29 @@
 - debug:
-    msg: "Running 2671-01 role"
+    msg: "Running 2671-02 role"
 - pause:
     seconds: 2
 
 - name: Set the default state to present
   set_fact:
     avi_config_state: "{{ avi_config_state|default('present') }}"
-    region_subnet: 172.16.110.0
+    region_subnet: 10.1.13.128
 
-- name: Override Region Subnet for Region B
-  set_fact:
-    region_subnet: 172.16.210.0
-  when:
-    region | lower == 'b'
 
-- set_fact:
-    region_placeholder: "{{region}}"
-
-- name: Define "{{ 'basic-app-' + region }}" Virtual Service
-  import_role:
-    name: vmware.alb.aviconfig
-  vars:
-    avi_credentials: "{{ avi_creds }}"
-    region: "{{region_placeholder}}"
-    avi_config:
-      pool:
-        - name: "{{ 'basic-app-' + region | lower +'-pool'}}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          default_server_port: 80
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"          
-          servers: 
-            # - ip:
-            #   addr: {{ region_subnet[:region_subnet.rfind('.')+1] + '10' }}
-            #   type: V4
-            - hostname: "k8smaster-01{{ region }}.vcf.sddc.lab"
-              resolve_server_by_dns: true
-          health_monitor_refs:
-            - '/api/healthmonitor?name=System-HTTP'
-      vsvip:
-        - name: "{{ 'basic-app-' + region + '-VsVip' }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
-          dns_info:
-            - num_records_in_response: 1
-              type: DNS_RECORD_A
-              fqdn: "{{ 'basic-app-' + region | lower +'.region01' + region | lower + '.vcf.sddc.lab' }}"
-              algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
-              ttl: 30
-          vip:
-            - auto_allocate_ip: true
-              vip_id: '1'
-              avi_allocated_fip: false
-              discovered_networks:
-                - subnet:
-                    - mask: 24
-                      ip_addr:
-                        type: V4
-                        addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=ls-vmnet-{{ region }}"
-              enabled: true
-              ipam_network_subnet:
-                subnet:
-                  mask: 24
-                  ip_addr:
-                    type: V4
-                    addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=ls-vmnet-{{ region }}"
-              auto_allocate_floating_ip: true
-              avi_allocated_vip: false
-              auto_allocate_ip_type: V4_ONLY
-      virtualservice:
-        - name: "{{ 'basic-app-' + region }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          pool_ref: "{{'/api/pool?name=basic-app-' + region +'-pool'}}"
-          application_profile_ref: '/api/applicationprofile?name=System-HTTP'
-          services:
-            - port: 80
-          vsvip_ref: "{{ '/api/vsvip?name=basic-app-' + region + '-VsVip' }}"
-          analytics_policy:
-            udf_log_throttle: 10
-            full_client_logs:
-              duration: 0
-              throttle: 10
-              enabled: true
-            metrics_realtime_update:
-              duration: 0
-              enabled: false
-            significant_log_throttle: 10
-            client_insights: NO_INSIGHTS
-            all_headers: true
-
-- name: Define "{{ 'adv-app-' + region }}" Virtual Service
+- name: Define adv-app-a Virtual Service
   import_role:
     name: vmware.alb.aviconfig
   vars:
     avi_credentials: "{{ avi_creds }}"
     avi_config:
       pool:
-        - name: "{{ 'adv-app-' + region | lower +'-pool'}}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "adv-app-a-pool"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           default_server_port: 30001 
-          servers: 
-            - hostname: "k8sworker-01{{ region }}.vcf.sddc.lab"
+          servers:
+            - hostname: "linux-01a.site-a.vcf.lab"
               resolve_server_by_dns: true
-            - hostname: "k8sworker-02{{ region }}.vcf.sddc.lab"
+            - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
             - '/api/healthmonitor?name=System-HTTP'
@@ -113,13 +32,13 @@
               status_code: FAIL_HTTP_STATUS_CODE_503
             type: FAIL_ACTION_HTTP_LOCAL_RSP
       vsvip:
-        - name: "{{ 'adv-app-' + region + '-VsVip' }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "adv-app-a-VsVip"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           dns_info:
             - num_records_in_response: 1
               type: DNS_RECORD_A
-              fqdn: "{{ 'adv-app-' + region | lower +'.region01' + region | lower + '.vcf.sddc.lab' }}"
+              fqdn: "adv-app-a.site-a.vcf.lab"
               algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
               ttl: 30
           vip:
@@ -128,32 +47,32 @@
               avi_allocated_fip: false
               discovered_networks:
                 - subnet:
-                    - mask: 24
+                    - mask: 25
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                  network_ref: "/api/network?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
-                  mask: 24
+                  mask: 25
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                network_ref: "/api/network?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
       virtualservice:
-        - name: "{{ 'adv-app-' + region }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          pool_ref: "{{'/api/pool?name=adv-app-' + region +'-pool'}}"
+        - name: adv-app-a
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          pool_ref: "/api/pool?name=adv-app-a-pool"
           application_profile_ref: '/api/applicationprofile?name=System-HTTP'
           services:
             - port: 80
               port_range_end: 85
             - port: 8080
-          vsvip_ref: "{{ '/api/vsvip?name=adv-app-' + region + '-VsVip' }}"
+          vsvip_ref: "/api/vsvip?name=adv-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
@@ -167,7 +86,7 @@
             client_insights: NO_INSIGHTS
             all_headers: true
 
-- name: Define "{{ 'secure-app-' + region }}" Virtual Service
+- name: Define secure-app-a Virtual Service
   import_role:
     name: vmware.alb.aviconfig
   vars:
@@ -182,28 +101,28 @@
           type: HEALTH_MONITOR_HTTP
           monitor_port: 30080
       pool:
-        - name: "{{ 'secure-app-' + region | lower +'-pool'}}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "secure-app-a-pool"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           default_server_port: 30443
           sni_enabled: true
           ssl_profile_ref: '/api/sslprofile?name=System-Standard'
           servers:
-            - hostname: "k8sworker-01{{ region }}.vcf.sddc.lab"
+            - hostname: "linux-01a.site-a.vcf.lab"
               resolve_server_by_dns: true
-            - hostname: "k8sworker-02{{ region }}.vcf.sddc.lab"
+            - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
             - '/api/healthmonitor?name=System-HTTPS'
             - '/api/healthmonitor?name=Custom-HTTP'
       vsvip:
-        - name: "{{ 'secure-app-' + region + '-VsVip' }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "secure-app-a-VsVip"
+          cloud_ref: '/api/cloud/?name={{ cloud_name }}'
+          tier1_lr: "/infra/tier-1s/{{t1_uuid}}"
           dns_info:
             - num_records_in_response: 1
               type: DNS_RECORD_A
-              fqdn: "{{ 'secure-app-' + region | lower +'.region01' + region | lower + '.vcf.sddc.lab' }}"
+              fqdn: "secure-app-a.lb.site-a.vcf.lab"
               algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
               ttl: 30
           vip:
@@ -212,26 +131,26 @@
               avi_allocated_fip: false
               discovered_networks:
                 - subnet:
-                    - mask: 24
+                    - mask: 25
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                  network_ref: "/api/network?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
-                  mask: 24
+                  mask: 25
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                network_ref: "/api/network?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
       virtualservice:
-        - name: "{{ 'secure-app-' + region }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          pool_ref: "{{'/api/pool?name=secure-app-' + region +'-pool'}}"
+        - name: "secure-app-a"
+          cloud_ref: '/api/cloud/?name={{ cloud_name }}'
+          pool_ref: "/api/pool?name=secure-app-a-pool"
           application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
           ssl_key_and_certificate_refs:
             - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
@@ -242,7 +161,7 @@
             - enable_ssl: true
               port_range_end: 443
               port: 443
-          vsvip_ref: "{{ '/api/vsvip?name=secure-app-' + region + '-VsVip' }}"
+          vsvip_ref: "/api/vsvip?name=secure-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
@@ -256,7 +175,7 @@
             client_insights: NO_INSIGHTS
             all_headers: true
 
-- name: Define "{{ 'tenant-app-' + region }}" Virtual Service
+- name: Define tenant-app-a Virtual Service
   import_role:
     name: vmware.alb.aviconfig
   vars:
@@ -275,32 +194,32 @@
           type: HEALTH_MONITOR_HTTP
           monitor_port: 30080
       pool:
-        - name: "{{ 'tenant-app-' + region | lower +'-pool'}}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "tenant-app-a-pool"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           tenant: engineering
           tenant_ref: /api/tenant?name=engineering
           default_server_port: 30443
           sni_enabled: true
           ssl_profile_ref: '/api/sslprofile?name=System-Standard'
-          servers: 
-            - hostname: "k8sworker-01{{ region }}.vcf.sddc.lab"
+          servers:
+            - hostname: "linux-01a.site-a.vcf.lab"
               resolve_server_by_dns: true
-            - hostname: "k8sworker-02{{ region }}.vcf.sddc.lab"
+            - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
             - '/api/healthmonitor?name=System-HTTPS'
             - '/api/healthmonitor?name=Custom-Engineering-HTTP'
       vsvip:
-        - name: "{{ 'tenant-app-' + region + '-VsVip' }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
-          tier1_lr: "/infra/tier-1s/t1-gw-site{{ region }}"
+        - name: "tenant-app-a-VsVip"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
+          tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           tenant: engineering
           tenant_ref: /api/tenant?name=engineering
           dns_info:
             - num_records_in_response: 1
               type: DNS_RECORD_A
-              fqdn: "{{ 'tenant-app-' + region | lower +'.region01' + region | lower + '.vcf.sddc.lab' }}"
+              fqdn: "tenant-app-a.lb.site-a.vcf.lab"
               algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
               ttl: 30
           vip:
@@ -309,28 +228,28 @@
               avi_allocated_fip: false
               discovered_networks:
                 - subnet:
-                    - mask: 24
+                    - mask: 25
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                  network_ref: "/api/network?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
-                  mask: 24
+                  mask: 25
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=ls-vmnet-{{ region }}"
+                network_ref: "/api/network?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
       virtualservice:
-        - name: "{{ 'tenant-app-' + region }}"
-          cloud_ref: '/api/cloud?name=Site{{region | upper}}_nsx_cloud'
+        - name: "tenant-app-a"
+          cloud_ref: '/api/cloud/?name={{cloud_name}}'
           tenant: engineering
           tenant_ref: /api/tenant?name=engineering
-          pool_ref: "{{'/api/pool?name=tenant-app-' + region +'-pool'}}"
+          pool_ref: "/api/pool?name=tenant-app-a-pool"
           application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
           ssl_key_and_certificate_refs:
             - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
@@ -341,7 +260,7 @@
             - enable_ssl: true
               port_range_end: 443
               port: 443
-          vsvip_ref: "{{ '/api/vsvip?name=tenant-app-' + region + '-VsVip' }}"
+          vsvip_ref: "/api/vsvip?name=tenant-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
