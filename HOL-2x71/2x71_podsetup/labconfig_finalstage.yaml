@@ -359,14 +359,6 @@
         dest: /home/holuser/Desktop/modswitcher.desktop
         mode: '0775'
 
-    - name: Changing perm of "modswitcher.desktop", adding "+x"
-      file:
-        dest: /home/holuser/Desktop/modswitcher.desktop
-        mode: a+x
-
-    - name: Make modswitcher icon Trusted
-      shell: dbus-launch gio set /home/holuser/Desktop/modswitcher.desktop "metadata::trusted" true
-
 ###
 ##########################################################################
 

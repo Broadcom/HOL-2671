@@ -38,7 +38,7 @@
           dns_info:
             - num_records_in_response: 1
               type: DNS_RECORD_A
-              fqdn: "adv-app-a.site-a.vcf.lab"
+              fqdn: "adv-app-a.lb.site-a.vcf.lab"
               algorithm: DNS_RECORD_RESPONSE_CONSISTENT_HASH
               ttl: 30
           vip:
