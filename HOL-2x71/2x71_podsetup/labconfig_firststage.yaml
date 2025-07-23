@@ -15,7 +15,7 @@
 
     - name: copy cert in for firefox
       ansible.builtin.copy:
-        src: /etc/ca/ca.crt
+        src: /hol/ca/ca.crt
         dest: /usr/local/share/ca-certificates
         remote_src: yes
       become: yes
@@ -42,7 +42,7 @@
     
     - name: copy cert in for firefox
       ansible.builtin.copy:
-        src: /etc/ca/ca.crt
+        src: /hol/ca/ca.crt
         dest: /etc/firefox/policies/certificates
         remote_src: yes
       become: yes
