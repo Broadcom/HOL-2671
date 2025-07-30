@@ -41,10 +41,18 @@ def main():
             'idle_timeout':  '330',
             'resource_type': 'LBFastUdpProfile'
             }
+        hm_data = {
+            'display_name' : 'http-30001',
+            'resource_type' : 'LBTcpMonitorProfile',
+            'monitor_port' : 30001
+            }
         tcp_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-app-profiles/custom-fast-tcp", json=fast_tcp_data)
         lsf.write_output(f"Result code - {tcp_result.status_code}, Error text - {tcp_result.text}")
         udp_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-app-profiles/custom-fast-udp", json=fast_udp_data)
         lsf.write_output(f"Result code - {udp_result.status_code}, Error text - {udp_result.text}")
+        mon_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-monitor-profiles/http-30001", json=hm_data)
+        lsf.write_output(f"Result code - {mon_result.status_code}, Error text - {mon_result.text}")
+      
     except Exception as e:
         lsf.write_output(e)
         try:

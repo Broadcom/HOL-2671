@@ -26,3 +26,6 @@
       community.general.terraform:
         project_path: '/hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment'
         state: present
+        variables:
+          nsxt_password: "{{ lookup('ansible.builtin.file', '/home/holuser/creds.txt') }}"
+

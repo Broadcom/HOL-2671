@@ -1,11 +1,11 @@
 # NSX Manager Vars
-nsxt_host = "nsx-wld01-01a"
+nsxt_host = "nsx-wld01-01a.site-a.vcf.lab"
 nsxt_username = "admin"
 #nsxt_password = 
 
 # NSX Manager Infrastruture Objects Vars
 site_b_load_balancer_1 = "site_b_load_balancer_1"
-tier1_name = "t1-gw-siteb"
+tier1_name = "t1-wld-a"
 
 # Pool Member Vars
 site_a_pool_member_1_name = "linux-01a"
