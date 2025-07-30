@@ -43,7 +43,7 @@ def main():
             }
         hm_data = {
             'display_name' : 'http-30001',
-            'resource_type' : 'LBTcpMonitorProfile',
+            'resource_type' : 'LBHttpMonitorProfile',
             'monitor_port' : 30001
             }
         tcp_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-app-profiles/custom-fast-tcp", json=fast_tcp_data)
