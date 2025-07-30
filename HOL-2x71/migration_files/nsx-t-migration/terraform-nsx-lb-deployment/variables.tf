@@ -14,8 +14,8 @@ variable "nsxt_password" {
   sensitive   = true
 }
 
-variable "site_b_load_balancer_1" {
-    description = "The name of the site b load balancer 1"
+variable "site_a_load_balancer_1" {
+    description = "The name of the site a load balancer 1"
     type        = string
 }
 

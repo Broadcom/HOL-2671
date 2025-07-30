@@ -4,7 +4,7 @@ nsxt_username = "admin"
 #nsxt_password = 
 
 # NSX Manager Infrastruture Objects Vars
-site_b_load_balancer_1 = "site_b_load_balancer_1"
+site_a_load_balancer_1 = "site_a_load_balancer_1"
 tier1_name = "t1-wld-a"
 project_name = "Default"
 
