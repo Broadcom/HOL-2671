@@ -8,6 +8,9 @@ import FreeSimpleGUI as sg
 import argparse
 import base64
 import subprocess
+import sys
+sys.path.append('/hol')
+sys.path.append('/home/holuser/py312venv/lib')
 #import ansible_runner
 
 
@@ -81,7 +84,7 @@ class ButtonPanel:
             panelevent, values = window.read()
             if panelevent == 'EXIT' or panelevent == sg.WIN_CLOSED: #  or panelevent is None:  This seems to make the window insta-close after run is over.
                 exit(0)
-            cmd = ["ansible-playbook",
+            cmd = ["/home/holuser/py312venv/bin/ansible-playbook",
                 "-e ANSIBLE_HOST_KEY_CHECKING=False",
                 f"{script_path}/{panelevent}",
                 "-v"]
