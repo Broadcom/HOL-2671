@@ -29,6 +29,8 @@ variable "site_a_pool_member_1_name" {
     type        = string
 }
 
+variable "project_name" {}
+
 variable "site_a_pool_member_1_ip" {
     description = "IP Address of site b pool member one"
     type        = string
