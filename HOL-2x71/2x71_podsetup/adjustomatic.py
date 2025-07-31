@@ -28,7 +28,7 @@ def main():
         lsf.write_output(os.environ)
         session = requests.Session()
         session.verify = False
-        session.auth = ('admin', os.environ['AVICTRL_PASS'])
+        session.auth = ('admin', os.environ['AVICTRL_PASSWORD'])
         nsx_mgr = 'https://nsx-wld01-a.site-a.vcf.lab'
         fast_tcp_data = {
             'display_name': 'custom-fast-tcp',
