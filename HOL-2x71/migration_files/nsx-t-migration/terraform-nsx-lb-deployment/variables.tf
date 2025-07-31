@@ -19,10 +19,10 @@ variable "site_a_load_balancer_1" {
     type        = string
 }
 
-variable "tier1_name" {
-    description = "The name of the tier 1 the load balancers will be connected to"
-    type        = string
-}
+# variable "tier1_name" {
+#     description = "The name of the tier 1 the load balancers will be connected to"
+#     type        = string
+# }
 
 variable "site_a_pool_member_1_name" {
     description = "Name of site b pool member one"
