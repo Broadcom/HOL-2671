@@ -5,8 +5,8 @@ nsxt_username = "admin"
 
 # NSX Manager Infrastruture Objects Vars
 site_a_load_balancer_1 = "site_a_load_balancer_1"
-tier1_name = "t1-wld-a"
-project_name = "Default"
+#tier1_name = "t1-wld-a"
+
 
 # Pool Member Vars
 site_a_pool_member_1_name = "linux-01a"

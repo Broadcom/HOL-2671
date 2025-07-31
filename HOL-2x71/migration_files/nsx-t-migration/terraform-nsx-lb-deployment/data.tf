@@ -1,11 +1,5 @@
-data "nsxt_policy_project" "default_project" {
-  display_name = var.project_name
-}
 
 data "nsxt_policy_tier1_gateway" "tier1_router" {
-  context {
-    project_id = data.nsxt_policy_project.default_project.id
-  }
   #display_name = var.tier1_name
   id = "349361ff-2844-4ad3-9f03-6ab52b47f5af"
 }
