@@ -6,7 +6,7 @@ resource "nsxt_policy_lb_http_application_profile" "http-to-https" {
 
 resource "nsxt_policy_lb_service" "site_a_load_balancer_1" { 
     display_name      = var.site_a_load_balancer_1
-    description       = "Site B Load Balancer 1"
+    description       = "Site A Load Balancer 1"
     connectivity_path = data.nsxt_policy_tier1_gateway.tier1_router.path
     size              = "SMALL"
     enabled           = true
@@ -40,7 +40,7 @@ resource "nsxt_policy_lb_pool" "pool-01" {
     display_name        = "pool-01"
     description         = "Server pool for web (HTTP) traffic"
     algorithm           = "ROUND_ROBIN"
-    active_monitor_path = data.nsxt_policy_lb_monitor.http-30001.path
+    active_monitor_paths = [data.nsxt_policy_lb_monitor.http-30001.path]
     passive_monitor_path = "/infra/lb-monitor-profiles/default-passive-lb-monitor"
     member {
         admin_state                = "ENABLED"
@@ -70,7 +70,7 @@ resource "nsxt_policy_lb_pool" "pool-02" {
     display_name        = "pool-02"
     description         = "Server pool for web (HTTP) traffic"
     algorithm           = "WEIGHTED_ROUND_ROBIN"
-    active_monitor_path = data.nsxt_policy_lb_monitor.http-30001.path
+    active_monitor_paths = [data.nsxt_policy_lb_monitor.http-30001.path]
     passive_monitor_path = "/infra/lb-monitor-profiles/default-passive-lb-monitor"
     member {
         admin_state                = "ENABLED"
@@ -100,7 +100,7 @@ resource "nsxt_policy_lb_pool" "pool-03" {
     display_name        = "pool-03"
     description         = "Server pool for web (HTTP) traffic"
     algorithm           = "LEAST_CONNECTION"
-    active_monitor_path = data.nsxt_policy_lb_monitor.http-30001.path
+    active_monitor_paths = [data.nsxt_policy_lb_monitor.http-30001.path]
     passive_monitor_path = "/infra/lb-monitor-profiles/default-passive-lb-monitor"
     member {
         admin_state                = "ENABLED"
@@ -192,7 +192,7 @@ resource "nsxt_policy_lb_pool" "pool-06" {
     display_name        = "pool-06"
     description         = "Server pool for web (HTTP) traffic"
     algorithm           = "ROUND_ROBIN"
-    active_monitor_path = data.nsxt_policy_lb_monitor.http-30001.path
+    active_monitor_paths = [data.nsxt_policy_lb_monitor.http-30001.path]
     passive_monitor_path = "/infra/lb-monitor-profiles/default-passive-lb-monitor"
     member {
         admin_state                = "ENABLED"
@@ -222,7 +222,7 @@ resource "nsxt_policy_lb_pool" "pool-07" {
     display_name        = "pool-07"
     description         = "Server pool for web (HTTP) traffic"
     algorithm           = "WEIGHTED_ROUND_ROBIN"
-    active_monitor_path = data.nsxt_policy_lb_monitor.http-30001.path
+    active_monitor_paths = [data.nsxt_policy_lb_monitor.http-30001.path]
     passive_monitor_path = "/infra/lb-monitor-profiles/default-passive-lb-monitor"
     member {
         admin_state                = "ENABLED"
