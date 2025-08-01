@@ -28,4 +28,8 @@
         state: present
         variables:
           nsxt_password: "{{ lookup('ansible.builtin.file', '/home/holuser/creds.txt') }}"
+        environment:
+          http_proxy: http://proxy:3128
+          https_proxy: http://proxy:3128
+          no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 

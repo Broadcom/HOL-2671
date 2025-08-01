@@ -7,6 +7,7 @@ s3-us-west-1.amazonaws.com
 q1uk5yfspf.execute-api.us-east-2.amazonaws.com
 cjguvz7527.execute-api.us-west-1.amazonaws.com
 auyrv6ve2i.execute-api.us-west-2.amazonaws.com
+firefox.settings.services.mozilla.com
 
 # vmware containers
 projects.registry.vmware.com
@@ -42,6 +43,7 @@ registry.terraform.io
 github.com
 objects.githubusercontent.com
 release-assets.githubusercontent.com
+checkpoint-api.hashicorp.com
 ## needed for avi documentation site, and kubernetes documentation
 avinetworks.com
 kubernetes.io
@@ -70,6 +72,7 @@ gallerycdn.vsassets.io
 gallery.vsassets.io
 #automatic update site for vscode
 #az764295.vo.msecnd.net 
+main.vscode-cdn.net
 ## certificate OCSP stuff
 crl3.digicert.com
 ocsp.digicert.com

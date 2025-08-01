@@ -64,7 +64,7 @@
       vmware.alb.avi_backupconfiguration:
         avi_credentials: "{{avi_credentials}}"
         name: "Backup-Configuration"
-        backup_passphrase: "{{ lookup('ansible.builtin.env', 'AVICTRL_PASS') }}"
+        backup_passphrase: "{{ lookup('ansible.builtin.file', '/home/holuser/creds.txt') }}"
         save_local: true
 
     - name: Controller properties
