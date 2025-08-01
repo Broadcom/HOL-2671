@@ -13,64 +13,66 @@
         line: 'user_pref("network.proxy.no_proxies_on", "localhost, 127.0.0.0/8, ::1, .site-a.vcf.lab, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, lb.site-a.vcf.lab,.site-a.vcf.lab,alb-a");'
     
 
-    - name: copy cert in for firefox
-      ansible.builtin.copy:
-        src: /hol/ca/ca.crt
-        dest: /usr/local/share/ca-certificates
-        remote_src: yes
-      become: yes
+####  stuff for cert trust, does not need to run every time
 
-    - name: update system certs
-      ansible.builtin.shell:
-        cmd: update-ca-certificates
-      become: yes
+    # - name: copy cert in for firefox
+    #   ansible.builtin.copy:
+    #     src: /hol/ca/ca.crt
+    #     dest: /usr/local/share/ca-certificates
+    #     remote_src: yes
+    #   become: yes
+
+    # - name: update system certs
+    #   ansible.builtin.shell:
+    #     cmd: update-ca-certificates
+    #   become: yes
 
 
-    - name: Create a directory if it does not exist
-      ansible.builtin.file:
-        path: /etc/firefox/policies
-        state: directory
-        mode: '0755'
-      become: yes
+    # - name: Create a directory if it does not exist
+    #   ansible.builtin.file:
+    #     path: /etc/firefox/policies
+    #     state: directory
+    #     mode: '0755'
+    #   become: yes
 
-    - name: Create a directory if it does not exist
-      ansible.builtin.file:
-        path: /etc/firefox/policies/certificates
-        state: directory
-        mode: '0755'
-      become: yes
+    # - name: Create a directory if it does not exist
+    #   ansible.builtin.file:
+    #     path: /etc/firefox/policies/certificates
+    #     state: directory
+    #     mode: '0755'
+    #   become: yes
     
-    - name: copy cert in for firefox
-      ansible.builtin.copy:
-        src: /hol/ca/ca.crt
-        dest: /etc/firefox/policies/certificates
-        remote_src: yes
-      become: yes
+    # - name: copy cert in for firefox
+    #   ansible.builtin.copy:
+    #     src: /hol/ca/ca.crt
+    #     dest: /etc/firefox/policies/certificates
+    #     remote_src: yes
+    #   become: yes
 
-    - name: Create Firefox policies.json
-      ansible.builtin.file:
-        path: /etc/firefox/policies/policies.json
-        state: touch
-        owner: root
-        group: root
-        mode: '0644'
-      become: yes
+    # - name: Create Firefox policies.json
+    #   ansible.builtin.file:
+    #     path: /etc/firefox/policies/policies.json
+    #     state: touch
+    #     owner: root
+    #     group: root
+    #     mode: '0644'
+    #   become: yes
 
-    - name: Configure Firefox certs
-      ansible.builtin.copy:
-        content: |
-          {
-            "policies": {
-              "Certificates": {
-                "ImportEnterpriseRoots": true,
-                "Install": [
-                  "/etc/firefox/policies/certificates/ca.crt"
-                ]
-              }
-            }
-          }
-        dest: /etc/firefox/policies/policies.json
-      become: yes
+    # - name: Configure Firefox certs
+    #   ansible.builtin.copy:
+    #     content: |
+    #       {
+    #         "policies": {
+    #           "Certificates": {
+    #             "ImportEnterpriseRoots": true,
+    #             "Install": [
+    #               "/etc/firefox/policies/certificates/ca.crt"
+    #             ]
+    #           }
+    #         }
+    #       }
+    #     dest: /etc/firefox/policies/policies.json
+    #   become: yes
 
     - name:
       ansible.builtin.debug:

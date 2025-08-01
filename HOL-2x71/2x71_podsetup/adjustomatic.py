@@ -17,8 +17,8 @@ def main():
     os.environ["HTTP_PROXY"] = "http://proxy:3128"
     os.environ["HTTPS_PROXY"] = "http://proxy:3128"
     os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.1.1.90,10.0.0.0/8"  
-    os.environ["AVICTRL_PASSWORD"] = open(password_file, 'r').read()
-    os.environ["TF_VAR_nsxt_password"] = open(password_file, 'r').read()
+    os.environ["AVICTRL_PASSWORD"] = open(password_file, 'r').read().strip("\n")
+    os.environ["TF_VAR_nsxt_password"] = open(password_file, 'r').read().strip("\n")
 
     try:
         lsf.write_output("Configuring NSX T App profiles")   
@@ -28,7 +28,7 @@ def main():
         lsf.write_output(os.environ)
         session = requests.Session()
         session.verify = False
-        session.auth = ('admin', os.environ['AVICTRL_PASS'])
+        session.auth = ('admin', os.environ['AVICTRL_PASSWORD'])
         nsx_mgr = 'https://nsx-wld01-a.site-a.vcf.lab'
         fast_tcp_data = {
             'display_name': 'custom-fast-tcp',
@@ -41,10 +41,18 @@ def main():
             'idle_timeout':  '330',
             'resource_type': 'LBFastUdpProfile'
             }
+        hm_data = {
+            'display_name' : 'http-30001',
+            'resource_type' : 'LBHttpMonitorProfile',
+            'monitor_port' : 30001
+            }
         tcp_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-app-profiles/custom-fast-tcp", json=fast_tcp_data)
         lsf.write_output(f"Result code - {tcp_result.status_code}, Error text - {tcp_result.text}")
         udp_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-app-profiles/custom-fast-udp", json=fast_udp_data)
         lsf.write_output(f"Result code - {udp_result.status_code}, Error text - {udp_result.text}")
+        mon_result = session.put(f"{nsx_mgr}/policy/api/v1/infra/lb-monitor-profiles/http-30001", json=hm_data)
+        lsf.write_output(f"Result code - {mon_result.status_code}, Error text - {mon_result.text}")
+      
     except Exception as e:
         lsf.write_output(e)
         try:

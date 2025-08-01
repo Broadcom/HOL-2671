@@ -14,20 +14,22 @@ variable "nsxt_password" {
   sensitive   = true
 }
 
-variable "site_b_load_balancer_1" {
-    description = "The name of the site b load balancer 1"
+variable "site_a_load_balancer_1" {
+    description = "The name of the site a load balancer 1"
     type        = string
 }
 
-variable "tier1_name" {
-    description = "The name of the tier 1 the load balancers will be connected to"
-    type        = string
-}
+# variable "tier1_name" {
+#     description = "The name of the tier 1 the load balancers will be connected to"
+#     type        = string
+# }
 
 variable "site_a_pool_member_1_name" {
     description = "Name of site b pool member one"
     type        = string
 }
+
+# variable "project_name" {}
 
 variable "site_a_pool_member_1_ip" {
     description = "IP Address of site b pool member one"

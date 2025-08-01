@@ -1,5 +1,7 @@
+
 data "nsxt_policy_tier1_gateway" "tier1_router" {
-  display_name = var.tier1_name
+  #display_name = var.tier1_name
+  id = "349361ff-2844-4ad3-9f03-6ab52b47f5af"
 }
 
 data "nsxt_policy_lb_app_profile" "custom-fast-tcp" {
