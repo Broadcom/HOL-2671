@@ -362,25 +362,7 @@
 ###
 ##########################################################################
 
-    - name: Creates nsx-t terraform directory
-      file:
-        path: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.9.0/linux_amd64
-        state: directory
 
-    - name: Download nsx-t terraform provider
-      ansible.builtin.get_url:
-        url: https://github.com/vmware/terraform-provider-nsxt/releases/download/v3.9.0/terraform-provider-nsxt_3.9.0_linux_amd64.zip
-        dest: /tmp/terraform-provider-nsxt_3.9.0_linux_amd64.zip
-      environment:
-        http_proxy: http://proxy:3128
-        https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
-
-    - name: Unarchive nsx-t terraform provider
-      ansible.builtin.unarchive:
-        src: /tmp/terraform-provider-nsxt_3.9.0_linux_amd64.zip
-        dest: /hol/hol-2671/migration_files/nsx-t-migration/terraform-nsx-lb-deployment/.terraform/providers/registry.terraform.io/vmware/nsxt/3.9.0/linux_amd64
-        remote_src: yes
  
     # - name: Creates avi terraform provider directory
     #   file:
@@ -403,22 +385,22 @@
     #     remote_src: yes
 
 
-    - name: Put terraform RC in home folder
-      copy:
-        src: /vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/terraform.rc
-        dest: /home/holuser/.terraformrc
+    # - name: Put terraform RC in home folder
+    #   copy:
+    #     src: /vpodrepo/2026-labs/2671/HOL-2x71/2x71_podsetup/terraform.rc
+    #     dest: /home/holuser/.terraformrc
 
     # - name: change system proxy settings, might be able to do this with dconf ansible module
     #   ansible.builtin.shell:
     #     cmd: gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '::1', '.site-a.vcf.lab', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '.region01a.site-a.vcf.lab','.region01b.site-a.vcf.lab','avicon-01a','avicon-01b']"
 
-    - name: install vscode extension
-      ansible.builtin.shell:
-        cmd: /snap/bin/code --install-extension hashicorp.terraform
-      environment:
-        http_proxy: http://proxy:3128
-        https_proxy: http://proxy:3128
-        no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
+    # - name: install vscode extension
+    #   ansible.builtin.shell:
+    #     cmd: /snap/bin/code --install-extension hashicorp.terraform
+    #   environment:
+    #     http_proxy: http://proxy:3128
+    #     https_proxy: http://proxy:3128
+    #     no_proxy: "localhost,127.0.0.0/8,::1,.site-a.vcf.lab,172.16.0.0/16, 192.168.0.0/16" 
 
 # - hosts: k8s_masters
 #   vars:
