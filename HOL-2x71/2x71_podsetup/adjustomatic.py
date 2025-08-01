@@ -17,8 +17,8 @@ def main():
     os.environ["HTTP_PROXY"] = "http://proxy:3128"
     os.environ["HTTPS_PROXY"] = "http://proxy:3128"
     os.environ["NO_PROXY"] = "localhost,127.0.0.0/8,::1,site-a.vcf.lab,10.1.1.90,10.0.0.0/8"  
-    os.environ["AVICTRL_PASSWORD"] = open(password_file, 'r').read()
-    os.environ["TF_VAR_nsxt_password"] = open(password_file, 'r').read()
+    os.environ["AVICTRL_PASSWORD"] = open(password_file, 'r').read().strip("\n")
+    os.environ["TF_VAR_nsxt_password"] = open(password_file, 'r').read().strip("\n")
 
     try:
         lsf.write_output("Configuring NSX T App profiles")   
