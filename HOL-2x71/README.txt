@@ -7,7 +7,7 @@ Explore VMware NSX Advanced Load Balancer by Avi Networks to see how it easy it 
 balancing, web application firewall and container ingress to any application in a multi-cloud
 environment.
 
-Product Details:
+Product Details: 
 
 -  NSX Advanced Load Balancer 30.2.1
 -  vSphere 8.0
