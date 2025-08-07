@@ -26,7 +26,7 @@
             - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
-            - '/api/healthmonitor?name=System-HTTP'
+            - '/api/healthmonitor/?name=System-HTTP'
           fail_action:
             local_rsp:
               status_code: FAIL_HTTP_STATUS_CODE_503
@@ -51,7 +51,7 @@
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=vip_network_site-a"
+                  network_ref: "/api/network/?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
@@ -59,20 +59,20 @@
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=vip_network_site-a"
+                network_ref: "/api/network/?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
       virtualservice:
         - name: adv-app-a
           cloud_ref: '/api/cloud/?name={{cloud_name}}'
-          pool_ref: "/api/pool?name=adv-app-a-pool"
-          application_profile_ref: '/api/applicationprofile?name=System-HTTP'
+          pool_ref: "/api/pool/?name=adv-app-a-pool"
+          application_profile_ref: '/api/applicationprofile/?name=System-HTTP'
           services:
             - port: 80
               port_range_end: 85
             - port: 8080
-          vsvip_ref: "/api/vsvip?name=adv-app-a-VsVip"
+          vsvip_ref: "/api/vsvip/?name=adv-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
@@ -113,8 +113,8 @@
             - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
-            - '/api/healthmonitor?name=System-HTTPS'
-            - '/api/healthmonitor?name=Custom-HTTP'
+            - '/api/healthmonitor/?name=System-HTTPS'
+            - '/api/healthmonitor/?name=Custom-HTTP'
       vsvip:
         - name: "secure-app-a-VsVip"
           cloud_ref: '/api/cloud/?name={{ cloud_name }}'
@@ -135,7 +135,7 @@
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=vip_network_site-a"
+                  network_ref: "/api/network/?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
@@ -143,7 +143,7 @@
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=vip_network_site-a"
+                network_ref: "/api/network/?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
@@ -151,9 +151,9 @@
         - name: "secure-app-a"
           cloud_ref: '/api/cloud/?name={{ cloud_name }}'
           pool_ref: "/api/pool?name=secure-app-a-pool"
-          application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
+          application_profile_ref: '/api/applicationprofile/?name=System-Secure-HTTP'
           ssl_key_and_certificate_refs:
-            - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
+            - "/api/sslkeyandcertificate/?name=HandsOnLabs_Appcert"
           services:
             - enable_ssl: false
               port_range_end: 80
@@ -161,7 +161,7 @@
             - enable_ssl: true
               port_range_end: 443
               port: 443
-          vsvip_ref: "/api/vsvip?name=secure-app-a-VsVip"
+          vsvip_ref: "/api/vsvip/?name=secure-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
@@ -186,7 +186,7 @@
       healthmonitor:
         - name: "Custom-Engineering-HTTP"
           tenant: engineering
-          tenant_ref: /api/tenant?name=engineering
+          tenant_ref: /api/tenant/?name=engineering
           http_monitor:
             http_request: GET / HTTP/1.0
             http_response_code:
@@ -198,24 +198,24 @@
           cloud_ref: '/api/cloud/?name={{cloud_name}}'
           tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           tenant: engineering
-          tenant_ref: /api/tenant?name=engineering
+          tenant_ref: /api/tenant/?name=engineering
           default_server_port: 30443
           sni_enabled: true
-          ssl_profile_ref: '/api/sslprofile?name=System-Standard'
+          ssl_profile_ref: '/api/sslprofile/?name=System-Standard'
           servers:
             - hostname: "linux-01a.site-a.vcf.lab"
               resolve_server_by_dns: true
             - hostname: "linux-02a.site-a.vcf.lab"
               resolve_server_by_dns: true
           health_monitor_refs:
-            - '/api/healthmonitor?name=System-HTTPS'
-            - '/api/healthmonitor?name=Custom-Engineering-HTTP'
+            - '/api/healthmonitor/?name=System-HTTPS'
+            - '/api/healthmonitor/?name=Custom-Engineering-HTTP'
       vsvip:
         - name: "tenant-app-a-VsVip"
           cloud_ref: '/api/cloud/?name={{cloud_name}}'
           tier1_lr: "/infra/tier-1s/{{ t1_uuid }}"
           tenant: engineering
-          tenant_ref: /api/tenant?name=engineering
+          tenant_ref: /api/tenant/?name=engineering
           dns_info:
             - num_records_in_response: 1
               type: DNS_RECORD_A
@@ -232,7 +232,7 @@
                       ip_addr:
                         type: V4
                         addr: "{{ region_subnet }}"
-                  network_ref: "/api/network?name=vip_network_site-a"
+                  network_ref: "/api/network/?name=vip_network_site-a"
               enabled: true
               ipam_network_subnet:
                 subnet:
@@ -240,7 +240,7 @@
                   ip_addr:
                     type: V4
                     addr: "{{ region_subnet }}"
-                network_ref: "/api/network?name=vip_network_site-a"
+                network_ref: "/api/network/?name=vip_network_site-a"
               auto_allocate_floating_ip: true
               avi_allocated_vip: false
               auto_allocate_ip_type: V4_ONLY
@@ -248,11 +248,11 @@
         - name: "tenant-app-a"
           cloud_ref: '/api/cloud/?name={{cloud_name}}'
           tenant: engineering
-          tenant_ref: /api/tenant?name=engineering
-          pool_ref: "/api/pool?name=tenant-app-a-pool"
-          application_profile_ref: '/api/applicationprofile?name=System-Secure-HTTP'
+          tenant_ref: /api/tenant/?name=engineering
+          pool_ref: "/api/pool/?name=tenant-app-a-pool"
+          application_profile_ref: '/api/applicationprofile/?name=System-Secure-HTTP'
           ssl_key_and_certificate_refs:
-            - "/api/sslkeyandcertificate?name=HandsOnLabs_Appcert"
+            - "/api/sslkeyandcertificate/?name=HandsOnLabs_Appcert"
           services:
             - enable_ssl: false
               port_range_end: 80
@@ -260,7 +260,7 @@
             - enable_ssl: true
               port_range_end: 443
               port: 443
-          vsvip_ref: "/api/vsvip?name=tenant-app-a-VsVip"
+          vsvip_ref: "/api/vsvip/?name=tenant-app-a-VsVip"
           analytics_policy:
             udf_log_throttle: 10
             full_client_logs:
