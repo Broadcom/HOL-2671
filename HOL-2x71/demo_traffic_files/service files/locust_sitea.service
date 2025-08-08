@@ -9,8 +9,8 @@ Restart=always
 ExecStartPre=-/usr/bin/docker rm -f locust_regiona
 ExecStartPre=/usr/bin/docker run -d --name locust_regiona \
     --net=host -e "LOCUST_LOCUSTFILE=avidemo_traffic_true_clientip.py" \
-    -e "LOCUST_HOST=172.16.130.11" -e "LOCUST_HEADLESS=true" -e "LOCUST_USERS=5" -e "LOCUST_SPAWN_RATE=1" \
-    us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/locust_demotraffic:v9-hol
+    -e "LOCUST_HOST=10.1.13.130" -e "LOCUST_HEADLESS=true" -e "LOCUST_USERS=5" -e "LOCUST_SPAWN_RATE=1" \
+    avi-alb-docker-virtual.usw1.packages.broadcom.com/nsx_alb/locust_demotraffic:v9-hol
 ExecStart=/usr/bin/docker wait locust_regiona
 ExecStop=/usr/bin/docker stop locust_regiona
 ExecStopPost=-/usr/bin/docker rm -f locust_regiona
