@@ -246,16 +246,16 @@
     #     name: us-central1-docker.pkg.dev/avi-sales-demos/avilabs-docker/locust_demotraffic:v9-hol
     #     source: pull
 
-    # - name: Replace locust service file
-    #   copy:
-    #     src: "/vpodrepo/2026-labs/2671/HOL-2x71/demo_traffic_files/service files/locust_sitea.service"
-    #     dest: /etc/systemd/system/locust_sitea.service
-    #   become: yes
+    - name: Replace locust service file
+      copy:
+        src: "/vpodrepo/2026-labs/2671/HOL-2x71/demo_traffic_files/service files/locust_sitea.service"
+        dest: /etc/systemd/system/locust_sitea.service
+      become: yes
 
-    # - name: reload systemd
-    #   ansible.builtin.systemd:
-    #     daemon_reload: true
-    #   become: yes
+    - name: reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+      become: yes
 
     # - name: Restart service jupyter
     #   ansible.builtin.systemd:
@@ -269,11 +269,11 @@
     #     state: restarted
     #   become: yes
   
-    # - name: Restart service locust 
-    #   ansible.builtin.service:
-    #     name: locust_sitea
-    #     state: restarted
-    #   become: yes
+    - name: Restart service locust 
+      ansible.builtin.service:
+        name: locust_sitea
+        state: restarted
+      become: yes
   
     # - name: Create site A kubernetes things
     #   kubernetes.core.k8s:
