@@ -1,9 +1,9 @@
-#Version 1
+#Version 2671
 
 VirtualService:
   - match_name: ".*"
     patch:
-      vrf_context_ref: /api/vrfcontext/?name=t1-gw-sitea
+      vrf_context_ref: /api/vrfcontext/?name=t1-wld-a
       enabled: true 
       traffic_enabled: true
  
@@ -15,12 +15,12 @@ VsVip:
         auto_allocate_ip: false
         prefix_length: 32
         placement_networks:
-        - network_ref: /api/network?name=ls-vmnet-a
-      tier1_lr: /infra/tier-1s/t1-gw-sitea
-      vrf_context_ref: /api/vrfcontext/?name=t1-gw-sitea
+        - network_ref: /api/network/?name=wld-a-avi-data
+      tier1_lr: /infra/tier-1s/t1-wld-a
+      vrf_context_ref: /api/vrfcontext/?name=t1-wld-a
  
 Pool:
   - match_name: ".*"
     patch:
-      tier1_lr: /infra/tier-1s/t1-gw-sitea
-      vrf_ref: /api/vrfcontext/?name=t1-gw-sitea
+      tier1_lr: /infra/tier-1s/t1-wld-a
+      vrf_ref: /api/vrfcontext/?name=t1-wld-a
