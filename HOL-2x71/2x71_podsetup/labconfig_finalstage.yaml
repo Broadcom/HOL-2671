@@ -80,8 +80,27 @@
 
 #  ####################################################
 
-# - hosts: k8s
-#   tasks:
+- hosts: linux-01a
+  tasks:
+    - name: cleanup
+      docker_container:
+        name: "aviweb"
+        state: absent
+        force_kill: yes
+    - pause:
+        seconds: 10
+    - name: start clients
+      docker_container:
+        name: "aviweb"
+        state: started
+        restart_policy: always
+        env:
+          NOLOGO: yes
+        image: avi-alb-docker-virtual.usw1.packages.broadcom.com/nsx_alb/avi_demoweb:v1
+      register: result
+      retries: 3
+      delay: 3
+      until: result is succeeded
 #     - name: Create a directory for docker override
 #       file:
 #         path: /etc/systemd/system/containerd.service.d
