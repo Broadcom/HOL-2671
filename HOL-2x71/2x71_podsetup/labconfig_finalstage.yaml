@@ -95,7 +95,9 @@
         state: started
         restart_policy: always
         env:
-          NOLOGO: yes
+          NOLOGO: "yes"
+        ports:
+          - "30001:80"
         image: avi-alb-docker-virtual.usw1.packages.broadcom.com/nsx_alb/avi_demoweb:v1
       register: result
       retries: 3
