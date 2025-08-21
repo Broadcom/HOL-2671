@@ -16,11 +16,11 @@ VsVip:
         prefix_length: 32
         placement_networks:
         - network_ref: /api/network/?name=wld-a-avi-data
-      tier1_lr: /infra/tier-1s/t1-wld-a
+      tier1_lr: /infra/tier-1s/349361ff-2844-4ad3-9f03-6ab52b47f5af
       vrf_context_ref: /api/vrfcontext/?name=t1-wld-a
  
 Pool:
   - match_name: ".*"
     patch:
-      tier1_lr: /infra/tier-1s/t1-wld-a
+      tier1_lr: /infra/tier-1s/349361ff-2844-4ad3-9f03-6ab52b47f5af
       vrf_ref: /api/vrfcontext/?name=t1-wld-a
