@@ -142,6 +142,7 @@
         http_method: patch
         data:
           replace:
+            state_based_dns_registration: false
             dns_provider_ref: "/api/ipamdnsproviderprofile?name=dns-site-a"
             ipam_provider_ref: "/api/ipamdnsproviderprofile?name=ipam-site-a"
 
