@@ -39,7 +39,7 @@ if not lsf.labcheck:
         lsf.write_output(e)
         lsf.write_output("could not import or an error occured with adjustomatic script")
         lsf.labfail('Adjustomatic script failed')
-
+        exit(1)
 
 # fail like this
 #lsf.labfail('FINAL ISSUE')
